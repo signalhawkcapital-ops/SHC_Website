@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h1>Investment Growth Analyzer</h1>
+  {% if message %}<div class="note">{{ message }}</div>{% endif %}
+
+  <div class="analyzer-grid">
+    <div class="chart card dark">
+      {{ price_graph | safe }}
+    </div>
+
+    <form class="controls card panel" method="get" action="{{ url_for('analyzer') }}">
+      <p class="panel-intro">To analyze historical performance, modify the investment amount and start date below. Then click <b>Update Chart</b> to see results for this strategy and alternate investments.</p>
+      <label>Investment Amount:</label>
+      <div class="input-wrap"><span>$</span><input type="number" step="100" name="initial" value="{{ initial }}" /></div>
+
+      <label>Start Date:</label>
+      <input type="date" name="start" value="{{ start }}" />
+
+      <label class="check"><input type="checkbox" name="include_er" {% if include_er %}checked{% endif %}/> Include Expense Ratio</label>
+      <label class="check"><input type="checkbox" name="include_taxes" {% if include_taxes %}checked{% endif %}/> Include Taxes</label>
+
+      <h4>Select Assets/Strategies:</h4>
+      <label class="check"><input type="checkbox" name="series_SH" {% if series_flags.series_SH %}checked{% endif %}/> Signal Hawk Strategy</label>
+      <label class="check"><input type="checkbox" name="series_HG_SIM" {% if series_flags.series_HG_SIM %}checked{% endif %}/> HG_SIM Strategy</label>
+      <label class="check"><input type="checkbox" name="series_SPXL" {% if series_flags.series_SPXL %}checked{% endif %}/> SPXL Buy &amp; Hold</label>
+      <label class="check"><input type="checkbox" name="series_SP500" {% if series_flags.series_SP500 %}checked{% endif %}/> S&amp;P 500 Buy &amp; Hold</label>
+      <label class="check"><input type="checkbox" name="series_NVDA" {% if series_flags.series_NVDA %}checked{% endif %}/> NVDA Buy &amp; Hold</label>
+      <label class="check"><input type="checkbox" name="series_AMZN" {% if series_flags.series_AMZN %}checked{% endif %}/> AMZN Buy &amp; Hold</label>
+      <label class="check"><input type="checkbox" name="series_AAPL" {% if series_flags.series_AAPL %}checked{% endif %}/> AAPL Buy &amp; Hold</label>
+      <label class="check"><input type="checkbox" name="series_TSLA" {% if series_flags.series_TSLA %}checked{% endif %}/> TSLA Buy &amp; Hold</label>
+
+      <button class="btn success" type="submit">Update Chart</button>
+    </form>
+  </div>
+
+  {% if table_rows %}
+  <div class="card metrics-card">
+    <table class="metrics full">
+      <thead><tr><th>Series</th><th>CAGR</th><th>Max DD</th><th>Final Value</th></tr></thead>
+      <tbody>
+      {% for r in table_rows %}
+        <tr><td>{{ r.name }}</td><td>{{ r.cagr }}</td><td>{{ r.mdd }}</td><td>{{ r.final }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+{% endblock %}

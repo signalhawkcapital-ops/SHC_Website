@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ page_title or "Signal Hawk Capital" }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand-left" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='SHC Logo.png') }}" alt="Signal Hawk Logo" class="logo">
+        <span class="brand-name">Signal Hawk Capital</span>
+      </a>
+      <nav class="links">
+        <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('analyzer') }}" class="nav-link">Investment Analyzer</a>
+        <a href="{{ url_for('resources') }}" class="nav-link">Resources</a>
+        <a href="{{ url_for('signup') }}" class="nav-link">Subscribe</a>
+        <a href="{{ url_for('about') }}" class="nav-link">About</a>
+        <a href="{{ url_for('account') }}" class="nav-link">Account</a>
+      </nav>
+    </div>
+  </header>
+
+  {% block top %}{% endblock %}
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>© 2025 Signal Hawk Capital</div>
+      <div class="fine-print">Trading involves substantial risk and is not suitable for all investors. Past performance is not indicative of future results.</div>
+    </div>
+  </footer>
+</body>
+</html>

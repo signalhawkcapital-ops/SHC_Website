@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SPX Price and SMA with Signals</title>
+    <style>
+        body { margin: 0; padding: 20px; background-color: #1a1a1a; color: #ffffff; font-family: Arial, sans-serif; }
+        .container { max-width: 1200px; margin: auto; }
+        h1 { text-align: center; }
+        .back-link { margin-bottom: 20px; }
+        .back-link a { color: #1e90ff; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        .chart-container { margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SPX Price with Buy/Sell Signals</h1>
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">Back to Main Dashboard</a>
+        </div>
+        <div class="chart-container">
+            <h2>SPX Price Action</h2>
+            {{ price_graph | safe }}
+        </div>
+        <div class="chart-container">
+            <h2>80-day SMA for SPX and SPXL</h2>
+            {{ sma_graph | safe }}
+        </div>
+    </div>
+</body>
+</html>

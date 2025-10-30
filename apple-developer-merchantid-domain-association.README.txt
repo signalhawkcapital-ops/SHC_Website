@@ -1,0 +1,1 @@
+Upload the exact file provided by Stripe to verify your domain for Apple Pay.
