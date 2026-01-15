@@ -209,10 +209,6 @@ def resources():
 def about():
     return render_template("about.html", page_title="About")
 
-@app.route("/account")
-def account():
-    return render_template("account.html", page_title="Account")
-
 @app.route("/signup")
 def signup():
     return render_template("signup_limina.html", page_title="Subscribe")
