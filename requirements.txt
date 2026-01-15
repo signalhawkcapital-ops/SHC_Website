@@ -4,3 +4,4 @@ pandas>=2.2.2
 numpy>=1.26.4
 yfinance>=0.2.43
 gunicorn==21.2.0
+stripe>=10.0.0
