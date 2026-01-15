@@ -49,51 +49,92 @@
       <button data-type="individual" class="active">Individual</button>
       <button data-type="professional">Professional</button>
     </div>
-    <div class="hint">Professional pricing is 10× Individual pricing.</div>
+    <div class="hint">Individual pricing is designed for personal investors who use our signals solely for their own accounts. Professional pricing applies to advisors, fund managers, institutions, or anyone using our signals to manage capital on behalf of others, generate client recommendations, or operate within a commercial investment business.</div>
 
-    <label style="margin-top:16px;">Plan</label>
-    <div class="plans" id="plans">
-      <div class="plan active" data-plan="monthly">
-        <div>Monthly</div>
-        <div class="price" id="price-monthly">$120</div>
-      </div>
-      <div class="plan" data-plan="yearly">
-        <div>Yearly</div>
-        <div class="price" id="price-yearly">$1,200</div>
-      </div>
-      <div class="plan" data-plan="10 Year">
-        <div>10 Year</div>
-        <div class="price" id="10-Year">$9,000</div>
-      </div>
-    </div>
+<label>Plan</label>
+<div class="plans" id="plans">
+  <div class="plan" data-plan="monthly">
+    <div>Monthly</div>
+    <div class="price" id="price-monthly">$120</div>
+  </div>
+  <div class="plan active" data-plan="yearly">
+    <div>Yearly</div>
+    <div class="price" id="price-yearly">$1,000</div>
+  </div>
+  <div class="plan" data-plan="lifetime">
+    <div>10 Year</div>
+    <div class="price" id="price-lifetime">$7,000</div>
+  </div>
+</div>
+
+<p class="hint" id="savings-text" style="margin-top:8px;"></p>
+
 
     <div class="btns">
-      <button class="btn" id="google-btn" title="Sign in with Google">Continue with Google</button>
-      <button class="btn" id="apple-btn" title="Sign in with Apple">Continue with Apple</button>
       <button class="btn primary" id="subscribe-btn">Subscribe</button>
     </div>
-
-    <p class="hint" style="margin-top:16px;">
-      By subscribing you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.
-    </p>
+    <label style="margin-top:14px; display:block;">
+      <input type="checkbox" id="accept-terms" style="margin-right:8px;" required>
+      <span class="hint">
+        I acknowledge that Signal Hawk Capital, LLC provides educational information only, is not a registered
+        investment adviser, and that investing involves risk including loss of principal. I agree to the
+        <a href="/terms" target="_blank">Terms and Conditions</a>,
+        <a href="/disclosures" target="_blank">Important Disclosures</a>,
+        and <a href="/privacy" target="_blank">Privacy Policy</a>.
+      </span>
+    </label>
   </div>
 
 <script>
   const invToggle = document.getElementById('investorToggle');
-  const planCards = document.querySelectorAll('.plan');
+    const planCards    = document.querySelectorAll('.plan');
   const priceMonthly = document.getElementById('price-monthly');
   const priceYearly  = document.getElementById('price-yearly');
   const priceLife    = document.getElementById('price-lifetime');
+  const savingsText  = document.getElementById('savings-text');
 
   let investorType = 'individual';
-  let plan = 'monthly';
+  let plan = 'yearly'; // default selection
+
 
   function updatePrices() {
     const factor = investorType === 'professional' ? 10 : 1;
-    priceMonthly.textContent = `$${(79 * factor).toLocaleString()}`;
-    priceYearly.textContent  = `$${(800 * factor).toLocaleString()}`;
+    priceMonthly.textContent = `$${(120 * factor).toLocaleString()}`;
+    priceYearly.textContent  = `$${(1000 * factor).toLocaleString()}`;
     priceLife.textContent    = `$${(7000 * factor).toLocaleString()}`;
   }
+
+    function parsePrice(text) {
+    // turns "$1,200" into 1200
+    return Number(text.replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  function updateSavings() {
+    const monthly = parsePrice(priceMonthly.textContent);
+    const yearly  = parsePrice(priceYearly.textContent);
+    const life    = parsePrice(priceLife.textContent);
+
+    savingsText.textContent = '';
+
+    if (!monthly) return;
+
+    if (plan === 'yearly') {
+      // compare yearly vs paying monthly for 12 months
+      const effectiveMonthly = yearly / 12;
+      const pct = Math.round((1 - effectiveMonthly / monthly) * 100);
+      if (pct > 0) {
+        savingsText.textContent = `Save ~${pct}% vs paying monthly.`;
+      }
+    } else if (plan === 'lifetime') {
+      // treat 10-year plan as 10 years of monthly payments
+      const effectiveMonthly = life / (12 * 10);
+      const pct = Math.round((1 - effectiveMonthly / monthly) * 100);
+      if (pct > 0) {
+        savingsText.textContent = `Save ~${pct}% over 10 years vs monthly.`;
+      }
+    }
+  }
+
 
   invToggle.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
@@ -101,6 +142,7 @@
       e.target.classList.add('active');
       investorType = e.target.dataset.type;
       updatePrices();
+      updateSavings();
     }
   });
 
@@ -109,24 +151,25 @@
       planCards.forEach(c => c.classList.remove('active'));
       card.classList.add('active');
       plan = card.dataset.plan;
+      updateSavings();
     });
   });
 
-  document.getElementById('google-btn').addEventListener('click', () => {
-    window.location = '/auth/google';
-  });
-  document.getElementById('apple-btn').addEventListener('click', () => {
-    window.location = '/auth/apple';
-  });
 
   document.getElementById('subscribe-btn').addEventListener('click', async () => {
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
+    const acceptedTerms = document.getElementById('accept-terms').checked;
+    if (!acceptedTerms) {
+      alert("You must accept the Terms, Disclosures, and Privacy Policy to continue.");
+      return;
+    }
+
 
     const res = await fetch('/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, phone, plan, investorType })
+    body: JSON.stringify({ email, phone, plan, investorType, accepted_terms: acceptedTerms })
     });
     if (!res.ok) {
       const msg = await res.text();
@@ -138,6 +181,7 @@
   });
 
   updatePrices();
+  updateSavings();
 </script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 # app.py
 import os, logging
+import stripe
 from datetime import datetime, date
 from typing import Dict, List
 import numpy as np
@@ -7,16 +8,198 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.io as pio
 import yfinance as yf
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify, url_for
+from dotenv import load_dotenv
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("signal-hawk")
 
+# Stripe (configured via environment variables / .env)
+
 app = Flask(__name__, template_folder="templates", static_folder="static")
+app.secret_key = os.environ.get('SESSION_SECRET', 'dev-secret-change-me')
+
+
+# ---------- Stripe configuration ----------
+APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://127.0.0.1:5000").rstrip("/")
+
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+
+# New pricing scheme (preferred)
+STRIPE_PRICE_INDIVIDUAL_MONTHLY  = os.environ.get("STRIPE_PRICE_INDIVIDUAL_MONTHLY", "")
+STRIPE_PRICE_INDIVIDUAL_YEARLY   = os.environ.get("STRIPE_PRICE_INDIVIDUAL_YEARLY", "")
+STRIPE_PRICE_INDIVIDUAL_LIFETIME = os.environ.get("STRIPE_PRICE_INDIVIDUAL_LIFETIME", "")
+STRIPE_PRICE_PRO_MONTHLY         = os.environ.get("STRIPE_PRICE_PRO_MONTHLY", "")
+STRIPE_PRICE_PRO_YEARLY          = os.environ.get("STRIPE_PRICE_PRO_YEARLY", "")
+STRIPE_PRICE_PRO_LIFETIME        = os.environ.get("STRIPE_PRICE_PRO_LIFETIME", "")
+
+# Legacy fallback (older env naming)
+STRIPE_PRICE_MONTHLY  = os.environ.get("STRIPE_PRICE_MONTHLY", "")
+STRIPE_PRICE_YEARLY   = os.environ.get("STRIPE_PRICE_YEARLY", "")
+STRIPE_PRICE_LIFETIME = os.environ.get("STRIPE_PRICE_LIFETIME", "")
+
+if STRIPE_SECRET_KEY:
+    stripe.api_key = STRIPE_SECRET_KEY
+else:
+    log.warning("WARNING: STRIPE_SECRET_KEY not set – Stripe Checkout will fail.")
+
+
+def _get_price_id(investor_type: str, plan: str) -> str:
+    """Return the Stripe *price* id for the selected investor type + plan.
+
+    investor_type: 'individual' | 'professional' (also accepts 'pro')
+    plan: 'monthly' | 'yearly' | 'lifetime'
+    """
+    inv = (investor_type or "individual").lower().strip()
+    if inv in ("pro", "professional"):
+        inv = "professional"
+
+    plan = (plan or "").lower().strip()
+    if plan not in ("monthly", "yearly", "lifetime"):
+        return ""
+
+    if inv == "professional":
+        lookup = {
+            "monthly": STRIPE_PRICE_PRO_MONTHLY,
+            "yearly": STRIPE_PRICE_PRO_YEARLY,
+            "lifetime": STRIPE_PRICE_PRO_LIFETIME,
+        }
+    else:
+        lookup = {
+            "monthly": STRIPE_PRICE_INDIVIDUAL_MONTHLY,
+            "yearly": STRIPE_PRICE_INDIVIDUAL_YEARLY,
+            "lifetime": STRIPE_PRICE_INDIVIDUAL_LIFETIME,
+        }
+
+    # If new scheme isn't set, fall back to legacy vars
+    price_id = lookup.get(plan) or ""
+    if not price_id:
+        legacy_lookup = {
+            "monthly": STRIPE_PRICE_MONTHLY,
+            "yearly": STRIPE_PRICE_YEARLY,
+            "lifetime": STRIPE_PRICE_LIFETIME,
+        }
+        price_id = legacy_lookup.get(plan) or ""
+
+    return price_id
+# ---------- Stripe Checkout: create session ----------
+@app.route("/create-checkout-session", methods=["POST"])
+def create_checkout_session():
+    """Create a Stripe Checkout session and return a redirect URL.
+
+    Expects JSON:
+      - email (required)
+      - phone (required)
+      - plan: monthly | yearly | lifetime (required)
+      - investorType: individual | professional (optional; defaults individual)
+    """
+    if not STRIPE_SECRET_KEY:
+        return ("Stripe not configured – set STRIPE_SECRET_KEY", 500)
+
+    data = request.get_json(silent=True) or {}
+    accepted_terms = bool(data.get("accepted_terms"))
+    if not accepted_terms:
+        return ("You must accept the Terms/Disclosures/Privacy Policy to continue.", 400)
+    email = (data.get("email") or "").strip()
+    phone = (data.get("phone") or "").strip()
+    plan = (data.get("plan") or "").strip().lower()
+    investor_type = (data.get("investorType") or data.get("investor_type") or "individual").strip().lower()
+
+    if not email or not phone or not plan:
+        return ("Missing email, phone, or plan", 400)
+
+    price_id = _get_price_id(investor_type, plan)
+    if not price_id:
+        return (
+            "Stripe price not configured for this selection. "
+            "Set STRIPE_PRICE_INDIVIDUAL_* / STRIPE_PRICE_PRO_* (or legacy STRIPE_PRICE_*).",
+            500,
+        )
+
+    mode = "subscription" if plan in ("monthly", "yearly") else "payment"
+
+    # Optional: record subscription intent (don't block checkout if DB fails)
+    try:
+        if "upsert_user" in globals():
+            upsert_user(
+                email=email,
+                phone=phone,
+                plan=plan,
+                stripe_customer_id=None,
+                status="initiated",
+            )
+    except Exception as exc:
+        log.warning("upsert_user failed (ignored): %s", exc)
+
+    success_url = f"{APP_BASE_URL}/?checkout=success"
+    cancel_url = f"{APP_BASE_URL}/signup?checkout=canceled"
+
+    try:
+        session = stripe.checkout.Session.create(
+            mode=mode,
+            line_items=[{"price": price_id, "quantity": 1}],
+            customer_email=email,
+            phone_number_collection={"enabled": True},
+            allow_promotion_codes=True,
+            metadata={
+                "alerts_email": email,
+                "alerts_phone": phone,
+                "plan": plan,
+                "terms_accepted": "true",
+                "terms_accepted_at": datetime.utcnow().isoformat(),
+                "terms_accepted_ip": request.headers.get("X-Forwarded-For", request.remote_addr) or ""
+            },
+            success_url=success_url,
+            cancel_url=cancel_url,
+        )
+        return jsonify({"url": session.url})
+    except stripe.error.StripeError as e:
+        msg = getattr(e, "user_message", None) or str(e)
+        log.exception("Stripe error creating checkout session")
+        return (msg, 500)
+    except Exception as e:
+        log.exception("Unexpected error creating checkout session")
+        return (str(e), 500)
 
 @app.route("/")
 def index():
     return render_template("home.html", page_title="Signal Hawk Capital")
+
+@app.route("/account")
+def account():
+    user = get_current_user()  # however you're storing session user
+    return render_template("account.html", user=user)
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+@app.route("/billing-portal")
+def billing_portal():
+    user = get_current_user()
+    if not user or not user.stripe_customer_id:
+        return redirect("/account")
+
+    session = stripe.billing_portal.Session.create(
+        customer=user.stripe_customer_id,
+        return_url=url_for("account", _external=True)
+    )
+    return redirect(session.url)
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+
+@app.route("/disclosures")
+def disclosures():
+    return render_template("disclosures.html")
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
 
 @app.route("/resources")
 def resources():
