@@ -167,10 +167,11 @@ def create_checkout_session():
 def index():
     return render_template("home.html", page_title="Signal Hawk Capital")
 
-@app.route("/account")
-def account():
-    user = get_current_user()  # however you're storing session user
+@app.route("/account", endpoint="account")
+def account_page():
+    user = get_current_user()
     return render_template("account.html", user=user)
+
 
 @app.route("/login")
 def login():
