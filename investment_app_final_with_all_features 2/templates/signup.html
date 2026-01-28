@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal Hawk Capital — Subscribe</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin:0; padding:24px; background:#0b0f14; color:#e6edf3; }
+    .card { max-width: 840px; margin: 0 auto; background:#111827; border:1px solid #223; border-radius:16px; padding:24px; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+    h1 { margin-top:0; font-size:28px; }
+    label { display:block; margin:12px 0 6px; font-weight:600; }
+    input, select { width:100%; padding:12px; border-radius:10px; border:1px solid #334; background:#0f172a; color:#e6edf3; }
+    .row { display:flex; gap:16px; }
+    .row > div { flex:1; }
+    .toggle { display:inline-flex; border:1px solid #334; border-radius:10px; overflow:hidden; margin-top:8px; }
+    .toggle button { padding:10px 14px; background:#0f172a; color:#e6edf3; border:none; cursor:pointer; }
+    .toggle button.active { background:#1f2937; font-weight:700; }
+    .plans { display:flex; gap:12px; margin-top:12px; }
+    .plan { flex:1; padding:12px; border:1px solid #334; border-radius:10px; cursor:pointer; text-align:center; background:#0f172a; }
+    .plan.active { border-color:#4f46e5; box-shadow:0 0 0 2px rgba(79,70,229,.35) inset; }
+    .btns { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+    .btn { padding:12px 16px; border-radius:10px; border:1px solid #334; background:#1f2937; color:#e6edf3; cursor:pointer; }
+    .btn.primary { background:#4f46e5; border-color:#4f46e5; }
+    .hint { font-size:12px; opacity:.8; }
+    .price { font-size:28px; font-weight:800; }
+    a { color:#9dd0ff; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Subscribe to Signal Hawk</h1>
+    <p class="hint">Wallets like <b>Apple Pay</b> and <b>Google Pay</b> are supported automatically in Stripe Checkout on supported devices/browsers.</p>
+
+    <div class="row">
+      <div>
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com" value="{{ user.email if user else '' }}">
+      </div>
+      <div>
+        <label>Phone (for alerts)</label>
+        <input id="phone" type="tel" placeholder="+1 555 123 4567">
+      </div>
+    </div>
+
+    <label>Investor type</label>
+    <div class="toggle" id="investorToggle">
+      <button data-type="individual" class="active">Individual</button>
+      <button data-type="professional">Professional</button>
+    </div>
+    <div class="hint">Professional pricing is 10× Individual pricing.</div>
+
+    <label style="margin-top:16px;">Plan</label>
+    <div class="plans" id="plans">
+      <div class="plan active" data-plan="monthly">
+        <div>Monthly</div>
+        <div class="price" id="price-monthly">$79</div>
+      </div>
+      <div class="plan" data-plan="yearly">
+        <div>Yearly</div>
+        <div class="price" id="price-yearly">$1,200</div>
+      </div>
+      <div class="plan" data-plan="lifetime">
+        <div>Lifetime</div>
+        <div class="price" id="price-lifetime">$7,000</div>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="btn primary" id="subscribe-btn">Subscribe</button>
+    </div>
+
+    <p class="hint" style="margin-top:16px;">
+      By subscribing you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.
+    </p>
+  </div>
+
+<script>
+  const invToggle = document.getElementById('investorToggle');
+  const planCards = document.querySelectorAll('.plan');
+  const priceMonthly = document.getElementById('price-monthly');
+  const priceYearly  = document.getElementById('price-yearly');
+  const priceLife    = document.getElementById('price-lifetime');
+
+  let investorType = 'individual';
+  let plan = 'monthly';
+
+  function updatePrices() {
+    const factor = investorType === 'professional' ? 10 : 1;
+    priceMonthly.textContent = `$${(79 * factor).toLocaleString()}`;
+    priceYearly.textContent  = `$${(800 * factor).toLocaleString()}`;
+    priceLife.textContent    = `$${(7000 * factor).toLocaleString()}`;
+  }
+
+  invToggle.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      invToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      investorType = e.target.dataset.type;
+      updatePrices();
+    }
+  });
+
+  planCards.forEach(card => {
+    card.addEventListener('click', () => {
+      planCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      plan = card.dataset.plan;
+    });
+  });
+
+  document.getElementById('google-btn').addEventListener('click', () => {
+    window.location = '/auth/google';
+  });
+  document.getElementById('apple-btn').addEventListener('click', () => {
+    window.location = '/auth/apple';
+  });
+
+  document.getElementById('subscribe-btn').addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    const res = await fetch('/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, phone, plan, investorType })
+    });
+    if (!res.ok) {
+      const msg = await res.text();
+      alert('Error: ' + msg);
+      return;
+    }
+    const data = await res.json();
+    window.location = data.url; // Stripe Checkout
+  });
+
+  updatePrices();
+</script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class='card'><!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal Hawk Capital — Subscribe</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin:0; padding:24px; background:#0b0f14; color:#e6edf3; }
+    .card { max-width: 840px; margin: 0 auto; background:#111827; border:1px solid #223; border-radius:16px; padding:24px; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+    h1 { margin-top:0; font-size:28px; }
+    label { display:block; margin:12px 0 6px; font-weight:600; }
+    input, select { width:100%; padding:12px; border-radius:10px; border:1px solid #334; background:#0f172a; color:#e6edf3; }
+    .row { display:flex; gap:16px; }
+    .row > div { flex:1; }
+    .toggle { display:inline-flex; border:1px solid #334; border-radius:10px; overflow:hidden; margin-top:8px; }
+    .toggle button { padding:10px 14px; background:#0f172a; color:#e6edf3; border:none; cursor:pointer; }
+    .toggle button.active { background:#1f2937; font-weight:700; }
+    .plans { display:flex; gap:12px; margin-top:12px; }
+    .plan { flex:1; padding:12px; border:1px solid #334; border-radius:10px; cursor:pointer; text-align:center; background:#0f172a; }
+    .plan.active { border-color:#4f46e5; box-shadow:0 0 0 2px rgba(79,70,229,.35) inset; }
+    .btns { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+    .btn { padding:12px 16px; border-radius:10px; border:1px solid #334; background:#1f2937; color:#e6edf3; cursor:pointer; }
+    .btn.primary { background:#4f46e5; border-color:#4f46e5; }
+    .hint { font-size:12px; opacity:.8; }
+    .price { font-size:28px; font-weight:800; }
+    a { color:#9dd0ff; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Subscribe to Signal Hawk</h1>
+    <p class="hint">Wallets like <b>Apple Pay</b> and <b>Google Pay</b> are supported automatically in Stripe Checkout on supported devices/browsers.</p>
+
+    <div class="row">
+      <div>
+        <label>Email</label>
+        <input id="email" type="email" placeholder="you@example.com" value="{{ user.email if user else '' }}">
+      </div>
+      <div>
+        <label>Phone (for alerts)</label>
+        <input id="phone" type="tel" placeholder="+1 555 123 4567">
+      </div>
+    </div>
+
+    <label>Investor type</label>
+    <div class="toggle" id="investorToggle">
+      <button data-type="individual" class="active">Individual</button>
+      <button data-type="professional">Professional</button>
+    </div>
+    <div class="hint">Individual pricing is designed for personal investors who use our signals solely for their own accounts. Professional pricing applies to advisors, fund managers, institutions, or anyone using our signals to manage capital on behalf of others, generate client recommendations, or operate within a commercial investment business.</div>
+
+<label>Plan</label>
+<div class="plans" id="plans">
+  <div class="plan" data-plan="monthly">
+    <div>Monthly</div>
+    <div class="price" id="price-monthly">$120</div>
+  </div>
+  <div class="plan active" data-plan="yearly">
+    <div>Yearly</div>
+    <div class="price" id="price-yearly">$1,000</div>
+  </div>
+  <div class="plan" data-plan="lifetime">
+    <div>10 Year</div>
+    <div class="price" id="price-lifetime">$7,000</div>
+  </div>
+</div>
+
+<p class="hint" id="savings-text" style="margin-top:8px;"></p>
+
+
+ <div class="btns" style="align-items:center;">
+  <button class="btn primary" id="subscribe-btn">
+    Subscribe
+  </button>
+
+  <span class="hint" style="max-width:420px;">
+    After successful subscription, you’ll receive an email with instructions
+    to create your account and begin receiving alerts.
+  </span>
+</div>
+
+    </div>
+    <label style="margin-top:14px; display:block;">
+      <input type="checkbox" id="accept-terms" style="margin-right:8px;" required>
+      <span class="hint">
+        I acknowledge that Signal Hawk Capital, LLC provides educational information only, is not a registered
+        investment adviser, and that investing involves risk including loss of principal. I agree to the
+        <a href="/terms" target="_blank">Terms and Conditions</a>,
+        <a href="/disclosures" target="_blank">Important Disclosures</a>,
+        and <a href="/privacy" target="_blank">Privacy Policy</a>.
+      </span>
+    </label>
+  </div>
+
+<script>
+  const invToggle = document.getElementById('investorToggle');
+    const planCards    = document.querySelectorAll('.plan');
+  const priceMonthly = document.getElementById('price-monthly');
+  const priceYearly  = document.getElementById('price-yearly');
+  const priceLife    = document.getElementById('price-lifetime');
+  const savingsText  = document.getElementById('savings-text');
+
+  let investorType = 'individual';
+  let plan = 'yearly'; // default selection
+
+
+  function updatePrices() {
+    const factor = investorType === 'professional' ? 10 : 1;
+    priceMonthly.textContent = `$${(120 * factor).toLocaleString()}`;
+    priceYearly.textContent  = `$${(1000 * factor).toLocaleString()}`;
+    priceLife.textContent    = `$${(7000 * factor).toLocaleString()}`;
+  }
+
+    function parsePrice(text) {
+    // turns "$1,200" into 1200
+    return Number(text.replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  function updateSavings() {
+    const monthly = parsePrice(priceMonthly.textContent);
+    const yearly  = parsePrice(priceYearly.textContent);
+    const life    = parsePrice(priceLife.textContent);
+
+    savingsText.textContent = '';
+
+    if (!monthly) return;
+
+    if (plan === 'yearly') {
+      // compare yearly vs paying monthly for 12 months
+      const effectiveMonthly = yearly / 12;
+      const pct = Math.round((1 - effectiveMonthly / monthly) * 100);
+      if (pct > 0) {
+        savingsText.textContent = `Save ~${pct}% vs paying monthly.`;
+      }
+    } else if (plan === 'lifetime') {
+      // treat 10-year plan as 10 years of monthly payments
+      const effectiveMonthly = life / (12 * 10);
+      const pct = Math.round((1 - effectiveMonthly / monthly) * 100);
+      if (pct > 0) {
+        savingsText.textContent = `Save ~${pct}% over 10 years vs monthly.`;
+      }
+    }
+  }
+
+
+  invToggle.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      invToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      investorType = e.target.dataset.type;
+      updatePrices();
+      updateSavings();
+    }
+  });
+
+  planCards.forEach(card => {
+    card.addEventListener('click', () => {
+      planCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      plan = card.dataset.plan;
+      updateSavings();
+    });
+  });
+
+
+  document.getElementById('subscribe-btn').addEventListener('click', async () => {
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const acceptedTerms = document.getElementById('accept-terms').checked;
+    if (!acceptedTerms) {
+      alert("You must accept the Terms, Disclosures, and Privacy Policy to continue.");
+      return;
+    }
+
+
+    const res = await fetch('/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, phone, plan, investorType, accepted_terms: acceptedTerms })
+    });
+    if (!res.ok) {
+      const msg = await res.text();
+      alert('Error: ' + msg);
+      return;
+    }
+    const data = await res.json();
+    window.location = data.url; // Stripe Checkout
+  });
+
+  updatePrices();
+  updateSavings();
+</script>
+</body>
+</html>
+
+</div>
+{% endblock %}

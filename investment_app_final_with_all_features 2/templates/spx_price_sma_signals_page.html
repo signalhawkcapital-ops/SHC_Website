@@ -1,0 +1,146 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html>
+<head>
+    <title>Signal Hawk Strategy Signals</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #00ccff;
+        }
+        .chart-container {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #2a2a2a;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+        }
+        a {
+            color: #00ccff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Signal Hawk Strategy Analysis</h1>
+    
+    <div class="chart-container">
+        <h2>SPX Price with Buy/Sell Signals</h2>
+        <a href="{{ url_for('index') }}">Back to Main Dashboard</a>
+        <div>
+            <h3>SPX Price Action</h3>
+            {{ price_graph | safe }}
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h2>SPXL Price with Buy/Sell Signals</h2>
+        <div>
+            <h3>SPXL Price Action</h3>
+            {{ spxl_graph | safe }}
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h2>80-day SMA for SPX and SPXL</h2>
+        <div>
+            {{ sma_graph | safe }}
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <h2>Summary</h2>
+        <p>{{ message | safe }}</p>
+    </div>
+
+    <div class="chart-container">
+        <h2>Signal Hawk Strategy Buy/Sell Signals</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Trade Number</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Index (SPX)</th>
+                    <th>Price (SPXL)</th>
+                    <th>Quantity</th>
+                    <th>Account Value</th>
+                    <th>Gain/Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for signal in signals_table %}
+                <tr>
+                    <td>{{ signal.trade_number }}</td>
+                    <td>{{ signal.date }}</td>
+                    <td>{{ signal.time }}</td>
+                    <td>{{ signal.type }}</td>
+                    <td>{{ signal.index }}</td>
+                    <td>{{ signal.price }}</td>
+                    <td>{{ signal.quantity }}</td>
+                    <td>{{ signal.account_value }}</td>
+                    <td>{{ signal.gain_loss if signal.gain_loss is not none else '' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

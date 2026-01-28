@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Account • Signal Hawk Capital</title>
+
+  <style>
+    :root{
+      --bg:#070b14;
+      --panel:#0b1220;
+      --card:#0f1a2e;
+      --border: rgba(255,255,255,.08);
+      --text:#e8edf7;
+      --muted:#a7b0c2;
+      --accent:#4f46e5;
+      --accent2:#6d66ff;
+      --danger:#ef4444;
+      --ok:#22c55e;
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius: 18px;
+    }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 500px at 20% 0%, rgba(79,70,229,.25), transparent 60%),
+                  radial-gradient(900px 500px at 80% 10%, rgba(109,102,255,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: 980px;
+      margin: 48px auto;
+      padding: 0 18px;
+    }
+    .hero{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    h1{
+      margin:0;
+      font-size: 44px;
+      letter-spacing:-.02em;
+    }
+    .sub{
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 16px;
+      line-height: 1.5;
+      max-width: 700px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    @media (max-width: 920px){
+      .grid{ grid-template-columns: 1fr; }
+      h1{ font-size: 36px; }
+    }
+    .sectionTitle{
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin: 4px 0 12px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .row:first-of-type{ border-top:0; }
+    .label{ color: var(--muted); font-size: 13px; }
+    .value{ font-weight: 700; }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .dot{
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--muted);
+    }
+    .dot.ok{ background: var(--ok); }
+    .dot.bad{ background: var(--danger); }
+    .btns{ display:flex; gap: 12px; flex-wrap:wrap; margin-top: 14px; }
+    .btn{
+      appearance:none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .btn.primary{
+      background: linear-gradient(180deg, var(--accent2), var(--accent));
+      border-color: rgba(109,102,255,.65);
+      box-shadow: 0 10px 24px rgba(79,70,229,.25);
+    }
+    .btn.danger{
+      background: rgba(239,68,68,.12);
+      border-color: rgba(239,68,68,.35);
+      color: #ffd7d7;
+    }
+    .btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+    }
+    .hint{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+    a{ color: #9db1ff; }
+    .notice{
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>Account</h1>
+        <div class="sub">Manage your subscription, billing, and security settings.</div>
+      </div>
+    </div>
+
+  {% if user and not user.password_hash %}
+  <div style="margin:14px 0; padding:12px; border:1px solid #334; border-radius:12px; background:#0f172a;">
+    <b>Account setup not finished.</b>
+    <div class="hint" style="margin-top:6px;">
+      Please complete setup to set a password and enable login.
+    </div>
+    <button class="btn primary" onclick="window.location='/account/send-setup-link'">
+      Send Setup Link
+    </button>
+  </div>
+{% endif %}
+
+    <div class="grid">
+
+      <!-- LEFT: ACCOUNT DETAILS -->
+      <div class="card">
+        <div class="sectionTitle">Account Details</div>
+
+        {% if not user %}
+          <div class="notice">
+            You’re not signed in. Log in to manage billing, alerts, and account settings.
+          </div>
+
+          <div class="btns">
+            <a class="btn primary" href="/login">Log In</a>
+            <a class="btn" href="/signup">Subscribe</a>
+          </div>
+
+        {% else %}
+          <div class="row">
+            <div>
+              <div class="label">Email</div>
+              <div class="value">{{ user["email"] if user is mapping else user.email }}</div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <div class="label">Subscription Status</div>
+              {% set status = (user["subscription_status"] if user is mapping else user.subscription_status) | default("") | lower %}
+              {% if status == "active" %}
+                <div class="badge"><span class="dot ok"></span> Active</div>
+              {% else %}
+                <div class="badge"><span class="dot bad"></span> Not Active</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="btns">
+            {% if status == "active" %}
+              <button class="btn primary" onclick="openBilling()">Manage Billing</button>
+            {% else %}
+              <a class="btn primary" href="/signup">Subscribe</a>
+            {% endif %}
+            <a class="btn" href="/reset-password">Change Password</a>
+            <a class="btn danger" href="/logout">Log Out</a>
+          </div>
+
+          <div class="hint">
+            Billing is managed securely via Stripe. Use “Manage Billing” to cancel, update payment method,
+            or download invoices.
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- RIGHT: HELP / NEXT STEPS -->
+      <div class="card">
+        <div class="sectionTitle">Help</div>
+
+        <div class="notice">
+          If you recently subscribed, check your inbox for your account setup email.
+          You can also resend the setup email below.
+        </div>
+
+        <div class="btns">
+          <button class="btn" onclick="resendSetup()">Resend Setup Email</button>
+          <a class="btn" href="/signup">Go to Subscribe</a>
+        </div>
+
+        <div class="hint">
+          If you don’t see the email, check spam/junk folders and verify your email address is correct.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function openBilling(){
+      try{
+        const res = await fetch("/billing-portal", { method: "POST" });
+        const data = await res.json();
+        if (data.url) window.location.href = data.url;
+        else alert(data.error || "Unable to open billing portal.");
+      } catch(e){
+        alert("Unable to open billing portal.");
+      }
+    }
+
+    async function resendSetup(){
+      const email = prompt("Enter the email used for your subscription:");
+      if (!email) return;
+
+      try{
+        const res = await fetch("/resend-setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (data.ok) alert("Setup email sent. Please check your inbox.");
+        else alert(data.error || "Unable to resend setup email.");
+      } catch(e){
+        alert("Unable to resend setup email.");
+      }
+    }
+  </script>
+</body>
+</html>

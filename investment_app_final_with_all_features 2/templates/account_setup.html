@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Account Setup — Signal Hawk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg:#0b0f14;
+      --card:#111827;
+      --ink:#e6edf3;
+      --muted:#9aa4b2;
+      --border:#223;
+      --accent:#4f46e5;
+    }
+
+    body {
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      margin:0;
+      padding:24px;
+      background:var(--bg);
+      color:var(--ink);
+    }
+
+    .wrap {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:24px;
+      box-shadow:0 8px 24px rgba(0,0,0,.35);
+    }
+
+    h1 { margin-bottom: 8px; }
+    p { color: var(--muted); }
+
+    label {
+      display:block;
+      margin-top:16px;
+      margin-bottom:6px;
+      font-weight:600;
+    }
+
+    input {
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #334;
+      background:#0f172a;
+      color:var(--ink);
+    }
+
+    .btn {
+      margin-top:20px;
+      padding:14px 18px;
+      border-radius:12px;
+      border:none;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+    }
+
+    .btn:hover {
+      opacity:0.9;
+    }
+
+    a {
+      color:#9dd0ff;
+      text-decoration:none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Complete Your Account Setup</h1>
+      <p>Finish setting up your Signal Hawk Capital account.</p>
+
+      <form method="POST" action="/account/setup">
+      <input type="hidden" name="token" value="{{ token }}">
+
+      <label>Email</label>
+      <input type="email" value="{{ email }}" disabled>
+
+      <label>Phone (for alerts)</label>
+      <input type="tel" name="phone" placeholder="+1 555 123 4567">
+
+      <label>Create Password</label>
+      <input type="password" name="password" required>
+
+      <button type="submit">Complete Setup</button>
+
+      </form>
+
+      <p style="margin-top:16px;">
+        Already set up? <a href="/login">Log in</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
