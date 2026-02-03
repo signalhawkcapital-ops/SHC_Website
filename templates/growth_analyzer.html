@@ -9,17 +9,18 @@
     </div>
 
     <form class="controls card panel" method="get" action="{{ url_for('analyzer') }}">
-      <p class="panel-intro">To analyze historical performance, modify the investment amount and start date below. Then click <b>Update Chart</b> to see results for this strategy and alternate investments.</p>
-      <label>Investment Amount:</label>
+      <p class="panel-intro">Modify the investment amount and start date, then click <b>Update Chart</b> to compare strategies and assets.</p>
+
+      <label>Investment Amount</label>
       <div class="input-wrap"><span>$</span><input type="number" step="100" name="initial" value="{{ initial }}" /></div>
 
-      <label>Start Date:</label>
+      <label>Start Date</label>
       <input type="date" name="start" value="{{ start }}" />
 
       <label class="check"><input type="checkbox" name="include_er" {% if include_er %}checked{% endif %}/> Include Expense Ratio</label>
       <label class="check"><input type="checkbox" name="include_taxes" {% if include_taxes %}checked{% endif %}/> Include Taxes</label>
 
-      <h4>Select Assets/Strategies:</h4>
+      <h4>Strategies &amp; Assets</h4>
       <label class="check"><input type="checkbox" name="series_SH" {% if series_flags.series_SH %}checked{% endif %}/> Signal Hawk Strategy</label>
       <label class="check"><input type="checkbox" name="series_HG_SIM" {% if series_flags.series_HG_SIM %}checked{% endif %}/> HG_SIM Strategy</label>
       <label class="check"><input type="checkbox" name="series_SPXL" {% if series_flags.series_SPXL %}checked{% endif %}/> SPXL Buy &amp; Hold</label>
@@ -36,7 +37,7 @@
   {% if table_rows %}
   <div class="card metrics-card">
     <table class="metrics full">
-      <thead><tr><th>Series</th><th>CAGR</th><th>Max DD</th><th>Final Value</th></tr></thead>
+      <thead><tr><th>Series</th><th>CAGR</th><th>Max Drawdown</th><th>Final Value</th></tr></thead>
       <tbody>
       {% for r in table_rows %}
         <tr><td>{{ r.name }}</td><td>{{ r.cagr }}</td><td>{{ r.mdd }}</td><td>{{ r.final }}</td></tr>

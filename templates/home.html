@@ -11,14 +11,68 @@
       </div>
       <ul class="bullets">
         <li>Proprietary rules-based signals on S&amp;P 500 &amp; SPXL</li>
-        <li>Enhance your ability to invest in durable uptrends; convert positions to cash at the onset of major selloffs</li>
-        <li>Clear entries/exits, utilize Machine Learning (ML) and robust data to eliminate guesswork</li>
+        <li>Designed to capture durable uptrends and exit at the onset of major selloffs</li>
+        <li>Clear entries/exits powered by Machine Learning and robust data</li>
       </ul>
     </div>
     <div class="hero-art">
       <img src="{{ url_for('static', filename='SHCpreview.png') }}" alt="Strategy preview">
-        <a class="btn primary" href="{{ url_for('analyzer') }}">Open Investment Analyzer</a>
+      <a class="btn primary" href="{{ url_for('analyzer') }}">Open Investment Analyzer</a>
     </div>
   </div>
 </section>
+
+<section class="features">
+  <div class="features-inner">
+    <h2 class="features-heading">Why Signal Hawk?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon blue">📊</div>
+        <h3>Rules-Based Signals</h3>
+        <p>Systematic buy and sell alerts driven by quantitative models — no guesswork, no emotion, just data.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">🛡️</div>
+        <h3>Capital Preservation</h3>
+        <p>Designed to move to cash at the onset of major market selloffs, protecting your downside when it matters most.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon amber">⚡</div>
+        <h3>Real-Time Alerts</h3>
+        <p>Get email and SMS notifications the moment a signal fires, so you can act quickly and confidently.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon blue">📈</div>
+        <h3>Backtested Performance</h3>
+        <p>Use the built-in Growth Analyzer to backtest Signal Hawk against the S&amp;P 500, SPXL, and individual stocks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon green">📚</div>
+        <h3>Investor Resources</h3>
+        <p>Educational content on compounding, DCA, account types, and brokerage onboarding to help you get started.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon amber">🔒</div>
+        <h3>Transparent &amp; Compliant</h3>
+        <p>Clear disclosures, terms of service, and privacy policy. Educational only — no personalized investment advice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block content %}
+<script>
+  // Show success banner if redirected from Stripe checkout
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('checkout') === 'success') {
+    const banner = document.createElement('div');
+    banner.className = 'alert ok';
+    banner.style.maxWidth = '720px';
+    banner.style.margin = '0 auto 20px';
+    banner.innerHTML = '🎉 <strong>Subscription successful!</strong> Check your email for instructions to set up your account and start receiving alerts.';
+    document.querySelector('.container').prepend(banner);
+    window.history.replaceState({}, '', '/');
+  }
+</script>
 {% endblock %}

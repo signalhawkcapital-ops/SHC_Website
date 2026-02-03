@@ -1,8 +1,51 @@
 services:
   - type: web
-    name: signal-hawk-website
-    env: python
-    plan: free
+    name: signal-hawk-capital
+    runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn website:app
-    autoDeploy: true
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: "3.11.7"
+      - key: APP_BASE_URL
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_INDIVIDUAL_MONTHLY
+        sync: false
+      - key: STRIPE_PRICE_INDIVIDUAL_YEARLY
+        sync: false
+      - key: STRIPE_PRICE_INDIVIDUAL_LIFETIME
+        sync: false
+      - key: STRIPE_PRICE_PRO_MONTHLY
+        sync: false
+      - key: STRIPE_PRICE_PRO_YEARLY
+        sync: false
+      - key: STRIPE_PRICE_PRO_LIFETIME
+        sync: false
+      - key: STRIPE_PRICE_MONTHLY
+        sync: false
+      - key: STRIPE_PRICE_YEARLY
+        sync: false
+      - key: STRIPE_PRICE_LIFETIME
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+    disk:
+      name: signal-hawk-data
+      mountPath: /data
+      sizeGB: 1

@@ -1,281 +1,252 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1>About</h1><div class='card'><p>Signal Hawk Capital is a research and data based technology company focused on Machine Learning (ML) and adaptive rules-based long-term trend investing.</p></div>
-{% endblock %}
+<style>
+  .res-header { margin-bottom: 32px; }
+  .res-header p { color: var(--text-muted); font-size: 16px; max-width: 660px; }
+  .res-layout { display: grid; grid-template-columns: 220px 1fr; gap: 32px; }
+  @media (max-width: 900px) { .res-layout { grid-template-columns: 1fr; } .res-sidebar { display: none; } }
+  .res-sidebar {
+    position: sticky; top: 84px; align-self: start;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px;
+  }
+  .res-sidebar h3 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; margin: 0 0 14px; color: var(--text); }
+  .res-sidebar ul { list-style: none; padding: 0; margin: 0; }
+  .res-sidebar li { margin-bottom: 10px; }
+  .res-sidebar a { color: var(--brand); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .res-sidebar a:hover { color: var(--text); }
 
+  .res-content { display: flex; flex-direction: column; gap: 28px; }
+  .res-section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 28px;
+  }
+  .res-section h2 {
+    font-family: 'Space Grotesk', sans-serif; font-size: 22px; margin: 0 0 14px;
+    letter-spacing: -0.02em;
+  }
+  .res-section h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
+  .res-section p { color: var(--text-muted); font-size: 15px; line-height: 1.7; margin: 0 0 10px; }
+  .res-section ul { color: var(--text-muted); font-size: 15px; line-height: 1.7; padding-left: 22px; margin: 8px 0 12px; }
+  .res-section li { margin-bottom: 4px; }
+  .res-section a { color: var(--brand); text-decoration: none; }
+  .res-section a:hover { text-decoration: underline; }
+  .res-section .fine { font-size: 13px; color: var(--text-muted); opacity: 0.7; margin-top: 12px; }
+  .res-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+  @media (max-width: 600px) { .res-grid-2 { grid-template-columns: 1fr; } }
+  .res-grid-2 .cell { background: rgba(0,0,0,0.15); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .res-grid-2 .cell h4 { font-size: 15px; margin: 0 0 8px; color: var(--text); }
+  .res-grid-2 .cell ul { margin: 0; padding-left: 18px; font-size: 14px; }
+  .res-grid-2 .cell a { color: var(--brand); }
+  .res-learn { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; font-size: 14px; }
+  .res-learn a { color: var(--brand); }
+  .videobox {
+    background: rgba(0,0,0,0.2); border: 1px dashed var(--border2);
+    border-radius: var(--radius); height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-muted); font-size: 14px; margin-top: 14px;
+  }
+  .affiliate-note {
+    background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25);
+    border-radius: var(--radius); padding: 14px; margin-top: 16px;
+    font-size: 14px; color: #fbbf24; line-height: 1.5;
+  }
+  .res-cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  .steps { list-style: decimal; padding-left: 22px; margin-top: 12px; }
+  .steps li { margin-bottom: 6px; }
+  .analyzer-cta {
+    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(34,197,94,0.05));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: var(--radius-lg); padding: 24px; text-align: center; margin-top: 8px;
+  }
+  .analyzer-cta h3 { margin: 0 0 8px; font-size: 18px; }
+  .analyzer-cta p { margin: 0 0 14px; }
+</style>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signal Hawk Capital – Resources</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    body { font-family: Montserrat, Arial, sans-serif; }
-    .top-nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; padding:15px; box-shadow:0 2px 8px rgba(0,0,0,0.1); background:linear-gradient(90deg, #e6f0ff 0%, #f9fcff 100%); position:sticky; top:0; z-index:1000; }
-    .company-name { font-weight:700; font-size:32px; color:#0a3d62; }
-    .nav-links a { margin:0 18px; font-size:18px; text-decoration:none; color:#0a3d62; }
-    .nav-links a:hover { color:#0000CD; border-bottom:2px solid #0000CD; }
-    .logo { height: 56px; margin-right: 14px; }
-    .section h2 { font-size: 2.1rem !important; line-height: 1.3 !important; }
-    .btn { background:#4CAF50; color:white; border-radius:12px; padding:10px 16px; font-weight:700; display:inline-block; }
-    .btn:hover { background:#45a049; }
-    .card { background:white; border:2px solid #0a3d62; border-radius:12px; padding:18px; }
-    .videobox { background:#e5e7eb; height:300px; display:flex; align-items:center; justify-content:center; color:#4b5563; border-radius:10px; }
-    .fine { font-size:14px; color:#6b7280; }
-  
-    /* Readability overrides */
-    html { scroll-behavior: smooth; }
-    body { font-size: 1.6rem !important; line-height: 1.6 !important; } /* ~32px base */
-    .section h2 { font-size: 2.1rem !important; line-height: 1.3 !important; } /* ~42px */
-    .section h3 { font-size: 1.75rem !important; line-height: 1.4 !important; }  /* ~35px */
-    .card { font-size: inherit !important; line-height: inherit !important; }
-    .nav-links a { font-size: 1.4rem !important; }
-    .company-name { font-size: 2.2rem !important; }
-    /* Content width control */
-    .content-col { width: 75vw; max-width: 75vw; margin: 0 auto; }
-    @media (max-width: 1024px) {
-      .content-col { width: 75vw; max-width: 75vw; margin: 0 auto; }
-    }
-    @media (max-width: 768px) {
-      .content-col { width: 75vw; max-width: 75vw; margin: 0 auto; }
-    }
-    </style>
-</head>
-<body class="bg-gray-50 ">
-  <div class="top-nav">
-    <div class="flex items-center">
-      <img src="{{ url_for('static', filename='Signal Hawk Captial Logo.png') }}" alt="Signal Hawk Capital Logo" class="logo">
-      <span class="company-name">Signal Hawk Capital</span>
-    </div>
-    <div class="nav-links">
-      <a href="/">Home</a>
-      <a href="/signup">Subscribe</a>
-      <a href="/about">About</a>
-      <a href="/account">Account</a>
-    </div>
-  </div>
+<div class="res-header">
+  <h1>Investor Resources &amp; Onboarding</h1>
+  <p>Everything you need — from investment basics and account setup to a deep dive on the Signal Hawk Strategy.</p>
+</div>
 
-  <header class="bg-white shadow-sm">
-    <div class="max-w-6xl mx-auto px-4 py-8">
-      <h1 class="text-[2.8rem] font-bold" style="color:#0a3d62;">Investor Resources & Onboarding</h1>
-      <p class="text-gray-700 mt-2">Everything you need—from investment basics and account setup to a deep dive on the Signal Hawk Strategy.</p>
-    </div>
-  </header>
+<div class="res-layout">
+  <aside class="res-sidebar">
+    <h3>Resources</h3>
+    <ul>
+      <li><a href="#strategy">Signal Hawk Strategy</a></li>
+      <li><a href="#fundamentals">Investment Fundamentals</a></li>
+      <li><a href="#accounts">Account Types &amp; Taxes</a></li>
+      <li><a href="#brokerages">Brokerage Onboarding</a></li>
+      <li><a href="#analyzer-cta">Growth Analyzer</a></li>
+    </ul>
+  </aside>
 
-  <main class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-[250px_minmax(0,1fr)] gap-8">
-    <!-- Sidebar Menu (non-sticky) -->
-    <nav class="hidden md:block bg-white border border-gray-300 rounded-lg p-4 h-fit">
-      <h2 class="font-semibold text-[2.2rem] mb-3 text-gray-800">Resources</h2>
-      <ul class="space-y-2 text-blue-700 ">
-        <li><a href="#strategy" class="hover:underline">Signal Hawk Strategy</a></li>
-        <li><a href="#fundamentals" class="hover:underline">Investment Fundamentals</a></li>
-        <li><a href="#accounts" class="hover:underline">Account Types & Taxes</a></li>
-        <li><a href="#brokerages" class="hover:underline">Brokerage Onboarding</a></li>
+  <div class="res-content">
+
+    <!-- Signal Hawk Strategy -->
+    <section id="strategy" class="res-section">
+      <h2>Signal Hawk Strategy — Overview</h2>
+      <p>Signal Hawk is a long-term, rules-based alert service that seeks to outperform the S&amp;P 500 by being invested during broad uptrends and reducing exposure during major drawdowns. Execution is typically through SPXL (3x S&amp;P 500 ETF) for risk-tolerant users or SPY/VOO for lower volatility.</p>
+      <ul>
+        <li>Data-driven entries/exits using price-trend regime filters</li>
+        <li>Downside-mitigation rules to avoid prolonged bear markets</li>
+        <li>Focus on time in market during favorable regimes</li>
       </ul>
-    </nav>
+      <div class="videobox">Video Placeholder: Strategy Deep Dive (coming soon)</div>
+      <div class="res-cta-row">
+        <a class="btn primary" href="{{ url_for('terms') }}">View Terms &amp; Conditions</a>
+        <a class="btn ghost" href="{{ url_for('disclosures') }}">Disclosures</a>
+      </div>
+      <p class="fine">*The whitepaper (coming soon) will provide methodology details, assumptions, and limitations.</p>
+    </section>
 
-    <!-- Content Column -->
-    <div class="space-y-10 content-col">
+    <!-- Investment Fundamentals -->
+    <section id="fundamentals" class="res-section">
+      <h2>Investment Fundamentals</h2>
 
-      <!-- Signal Hawk Strategy -->
-      <section id="strategy" class="section card">
-        <h2 class="text-[2.8rem] mb-3">Signal Hawk Strategy – Overview</h2>
-        <p class="text-gray-800">Signal Hawk is a long‑term, rules‑based alert service that seeks to outperform the S&P 500 by being invested during broad uptrends and reducing exposure during major drawdowns. Execution is typically through SPXL (3x S&P 500 ETF) for risk‑tolerant users or SPY/VOO for lower volatility.</p>
-        <ul class="list-disc pl-6 text-gray-800 mt-2">
-          <li>Data‑driven entries/exits using price‑trend regime filters</li>
-          <li>Downside‑mitigation rules to avoid prolonged bear markets</li>
-          <li>Focus on time in market during favorable regimes</li>
-        </ul>
-        <div class="videobox mt-4">Video Placeholder: Strategy Deep Dive (TradingView demo)</div>
-        <div class="mt-4 flex flex-wrap gap-3">
-          <a class="btn" href="/whitepaper">Download Strategy Whitepaper (PDF)</a>
-          <a class="btn" href="/terms">View Terms & Conditions (PDF)</a>
+      <h3 id="compounding">Compounding &amp; Long-Term Growth</h3>
+      <p>Compounding is growth on growth — reinvested returns generate additional returns over time.</p>
+      <ul>
+        <li>Start early — time in the market matters more than timing the market.</li>
+        <li>Keep costs low — expense ratios and fees compound against you.</li>
+        <li>Stay consistent — automatic contributions help you capture more compounding periods.</li>
+      </ul>
+      <div class="res-learn">
+        Learn more:
+        <a href="https://www.investopedia.com/terms/c/compounding.asp" target="_blank">Investopedia: Compounding</a> ·
+        <a href="https://www.khanacademy.org/economics-finance-domain/core-finance/interest-tutorial/compound-interest-tutorial" target="_blank">Khan Academy: Compound Interest</a>
+      </div>
+
+      <h3 id="dca">Dollar-Cost Averaging (DCA)</h3>
+      <p>DCA means investing a fixed amount on a regular schedule to reduce the impact of volatility.</p>
+      <ul>
+        <li>Smooths entry points across market cycles.</li>
+        <li>Helps avoid large, poorly timed lump-sum purchases.</li>
+        <li>Pairs well with automatic contributions (payroll or monthly transfers).</li>
+      </ul>
+      <div class="res-learn">
+        Learn more:
+        <a href="https://www.investopedia.com/terms/d/dollarcostaveraging.asp" target="_blank">Investopedia: DCA</a>
+      </div>
+
+      <h3 id="diversification">Diversification &amp; Asset Allocation</h3>
+      <p>Diversification spreads risk across assets; asset allocation aligns portfolios with risk tolerance and goals.</p>
+      <ul>
+        <li>Mix asset classes (stocks, bonds, cash; optionally real assets) to reduce single-asset risk.</li>
+        <li>Set a strategic allocation and rebalance periodically to maintain risk targets.</li>
+        <li>Use broad, low-cost index ETFs for core exposures (e.g., total market, S&amp;P 500, aggregate bonds).</li>
+      </ul>
+      <div class="res-learn">
+        Learn more:
+        <a href="https://www.investopedia.com/terms/d/diversification.asp" target="_blank">Investopedia: Diversification</a>
+      </div>
+
+      <h3 id="risk">Volatility, Drawdowns &amp; Risk Management</h3>
+      <p>Markets fluctuate. Risk management focuses on limiting large losses and staying invested appropriately.</p>
+      <ul>
+        <li>Expect drawdowns — even long bull markets experience 10–20% declines.</li>
+        <li>Align allocation with your time horizon and capacity for loss.</li>
+        <li>Use rules-based approaches (e.g., trend filters) to reduce prolonged bear-market exposure.</li>
+      </ul>
+      <div class="res-learn">
+        Learn more:
+        <a href="https://www.investopedia.com/terms/d/drawdown.asp" target="_blank">Investopedia: Drawdown</a>
+      </div>
+
+      <h3 id="taxes">Taxes: STCG vs LTCG</h3>
+      <p>Holding periods matter: short-term capital gains (STCG) are typically taxed as ordinary income; long-term (LTCG) often at lower rates.</p>
+      <ul>
+        <li>Consider placing higher-turnover strategies in tax-advantaged accounts when possible.</li>
+        <li>Harvest losses thoughtfully and avoid wash-sale violations.</li>
+        <li>Track cost basis and holding periods for accurate reporting.</li>
+      </ul>
+      <div class="res-learn">
+        Learn more:
+        <a href="https://www.irs.gov/taxtopics/tc409" target="_blank">IRS Topic 409 – Capital Gains &amp; Losses</a> ·
+        <a href="https://www.investopedia.com/articles/personal-finance/100515/guide-capital-gains-tax-rates.asp" target="_blank">Investopedia: Capital Gains Tax Guide</a>
+      </div>
+
+      <div class="res-grid-2">
+        <div class="cell">
+          <h4>Learn the Basics</h4>
+          <ul>
+            <li><a href="https://www.investopedia.com" target="_blank">Investopedia</a></li>
+            <li><a href="https://www.khanacademy.org/economics-finance-domain/core-finance" target="_blank">Khan Academy – Core Finance</a></li>
+            <li><a href="https://www.morningstar.com/learn" target="_blank">Morningstar Investing Classroom</a></li>
+          </ul>
         </div>
-        <p class="fine mt-3">*The whitepaper provides methodology details, assumptions, and limitations.</p>
-      </section>
-
-      <!-- Investment Fundamentals -->
-      <section id="fundamentals" class="section card">
-        <h2 class="text-[2.8rem] mb-3">Investment Fundamentals</h2>
-
-        <div class="space-y-6">
-          <div>
-            <h3 class="font-semibold text-[2.2rem]" id="compounding">Compounding & Long‑Term Growth</h3>
-            <p class="text-gray-800">Compounding is growth on growth—reinvested returns generate additional returns over time.</p>
-            <ul class="list-disc pl-6 text-gray-800 mt-2 space-y-1">
-              <li>Start early—time in the market matters more than timing the market.</li>
-              <li>Keep costs low—expense ratios and fees compound against you.</li>
-              <li>Stay consistent—automatic contributions help you capture more compounding periods.</li>
-            </ul>
-            <p class="mt-2 text-blue-700">
-              Learn more: 
-              <a target="_blank" href="https://www.investopedia.com/terms/c/compounding.asp">Investopedia: Compounding</a> · 
-              <a target="_blank" href="https://www.khanacademy.org/economics-finance-domain/core-finance/interest-tutorial/compound-interest-tutorial">Khan Academy: Compound Interest</a>
-            </p>
-          </div>
-
-          <div>
-            <h3 class="font-semibold text-[2.2rem]" id="dca">Dollar‑Cost Averaging (DCA)</h3>
-            <p class="text-gray-800">DCA means investing a fixed amount on a regular schedule to reduce the impact of volatility.</p>
-            <ul class="list-disc pl-6 text-gray-800 mt-2 space-y-1">
-              <li>Smooths entry points across market cycles.</li>
-              <li>Helps avoid large, poorly timed lump‑sum purchases.</li>
-              <li>Pairs well with automatic contributions (payroll or monthly transfers).</li>
-            </ul>
-            <p class="mt-2 text-blue-700">
-              Learn more:
-              <a target="_blank" href="https://www.investopedia.com/terms/d/dollarcostaveraging.asp">Investopedia: DCA</a> · 
-              <a target="_blank" href="https://www.morningstar.com/learn/dca">Morningstar: DCA Overview</a>
-            </p>
-          </div>
-
-          <div>
-            <h3 class="font-semibold text-[2.2rem]" id="diversification">Diversification & Asset Allocation</h3>
-            <p class="text-gray-800">Diversification spreads risk across assets; asset allocation aligns portfolios with risk tolerance and goals.</p>
-            <ul class="list-disc pl-6 text-gray-800 mt-2 space-y-1">
-              <li>Mix asset classes (stocks, bonds, cash; optionally real assets) to reduce single‑asset risk.</li>
-              <li>Set a strategic allocation and rebalance periodically to maintain risk targets.</li>
-              <li>Use broad, low‑cost index ETFs for core exposures (e.g., total market, S&P 500, aggregate bonds).</li>
-            </ul>
-            <p class="mt-2 text-blue-700">
-              Learn more:
-              <a target="_blank" href="https://www.investopedia.com/terms/d/diversification.asp">Investopedia: Diversification</a> · 
-              <a target="_blank" href="https://www.morningstar.com/learn/asset-allocation">Morningstar: Asset Allocation</a>
-            </p>
-          </div>
-
-          <div>
-            <h3 class="font-semibold text-[2.2rem]" id="risk">Volatility, Drawdowns & Risk Management</h3>
-            <p class="text-gray-800">Markets fluctuate. Risk management focuses on limiting large losses and staying invested appropriately.</p>
-            <ul class="list-disc pl-6 text-gray-800 mt-2 space-y-1">
-              <li>Expect drawdowns—even long bull markets experience 10–20% declines.</li>
-              <li>Align allocation with your time horizon and capacity for loss.</li>
-              <li>Use rules‑based approaches (e.g., trend filters) to reduce prolonged bear‑market exposure.</li>
-            </ul>
-            <p class="mt-2 text-blue-700">
-              Learn more:
-              <a target="_blank" href="https://www.investopedia.com/terms/d/drawdown.asp">Investopedia: Drawdown</a> · 
-              <a target="_blank" href="https://www.morningstar.com/learn/risk">Morningstar: Risk</a>
-            </p>
-          </div>
-
-          <div>
-            <h3 class="font-semibold text-[2.2rem]" id="taxes">Taxes: STCG vs LTCG</h3>
-            <p class="text-gray-800">Holding periods matter: short‑term capital gains (STCG) are typically taxed as ordinary income; long‑term (LTCG) often at lower rates.</p>
-            <ul class="list-disc pl-6 text-gray-800 mt-2 space-y-1">
-              <li>Consider placing higher‑turnover strategies in tax‑advantaged accounts when possible.</li>
-              <li>Harvest losses thoughtfully and avoid wash‑sale violations.</li>
-              <li>Track cost basis and holding periods for accurate reporting.</li>
-            </ul>
-            <p class="mt-2 text-blue-700">
-              Learn more:
-              <a target="_blank" href="https://www.irs.gov/taxtopics/tc409">IRS Topic 409 – Capital Gains & Losses</a> · 
-              <a target="_blank" href="https://www.investopedia.com/articles/personal-finance/100515/guide-capital-gains-tax-rates.asp">Investopedia: Capital Gains Tax Guide</a>
-            </p>
-          </div>
+        <div class="cell">
+          <h4>Stay Informed</h4>
+          <ul>
+            <li><a href="https://www.bloomberg.com" target="_blank">Bloomberg</a></li>
+            <li><a href="https://www.wsj.com" target="_blank">The Wall Street Journal</a></li>
+            <li><a href="https://financecharts.com" target="_blank">FinanceCharts</a></li>
+          </ul>
         </div>
+      </div>
+      <p class="fine">Educational only; not investment, tax, or legal advice. Consult qualified professionals for personalized guidance.</p>
+    </section>
 
-        <div class="grid md:grid-cols-2 gap-4 mt-6">
-          <div class="p-3 rounded border">
-            <h3 class="font-semibold">Learn the Basics</h3>
-            <ul class="list-disc pl-6 text-blue-700">
-              <li><a target="_blank" href="https://www.investopedia.com">Investopedia</a></li>
-              <li><a target="_blank" href="https://www.khanacademy.org/economics-finance-domain/core-finance">Khan Academy – Core Finance</a></li>
-              <li><a target="_blank" href="https://www.morningstar.com/learn">Morningstar Investing Classroom</a></li>
-            </ul>
-          </div>
-          <div class="p-3 rounded border">
-            <h3 class="font-semibold">Stay Informed</h3>
-            <ul class="list-disc pl-6 text-blue-700">
-              <li><a target="_blank" href="https://www.bloomberg.com">Bloomberg</a></li>
-              <li><a target="_blank" href="https://www.wsj.com">The Wall Street Journal</a></li>
-              <li><a target="_blank" href="https://financecharts.com">FinanceCharts</a></li>
-            </ul>
-          </div>
+    <!-- Account Types & Taxes -->
+    <section id="accounts" class="res-section">
+      <h2>Account Types &amp; Taxes (US)</h2>
+      <div class="res-grid-2">
+        <div class="cell">
+          <h4>Taxable Accounts</h4>
+          <p style="font-size:14px;color:var(--text-muted);">Standard brokerage accounts with capital gains/losses. Consider tax-efficient holding periods and realized gains.</p>
         </div>
-        <p class="fine mt-4">Educational only; not investment, tax, or legal advice. Consult qualified professionals for personalized guidance.</p>
-      </section>
+        <div class="cell">
+          <h4>Tax-Advantaged Accounts</h4>
+          <ul>
+            <li>Roth IRA – tax-free growth/withdrawals (subject to rules)</li>
+            <li>Traditional IRA – tax-deferred; withdrawals taxed as income</li>
+            <li>401(k)/Solo-401(k) – employer or self-employed plans</li>
+          </ul>
+        </div>
+      </div>
+      <p class="fine">Consult a qualified tax professional for your specific situation.</p>
+    </section>
 
-      <!-- Account Types & Taxes -->
-      <section id="accounts" class="section card">
-        <h2 class="text-[2.8rem] mb-3">Account Types & Taxes (US)</h2>
-        <div class="grid md:grid-cols-2 gap-4">
-          <div>
-            <h3 class="font-semibold">Taxable Accounts</h3>
-            <p>Standard brokerage accounts with capital gains/losses. Consider tax‑efficient holding periods and realized gains.</p>
-          </div>
-          <div>
-            <h3 class="font-semibold">Tax‑Advantaged Accounts</h3>
-            <ul class="list-disc pl-6">
-              <li>Roth IRA – tax‑free growth/withdrawals (subject to rules)</li>
-              <li>Traditional IRA – tax‑deferred; withdrawals taxed as income</li>
-              <li>401(k)/Solo‑401(k) – employer or self‑employed plans</li>
-            </ul>
-          </div>
+    <!-- Brokerage Onboarding -->
+    <section id="brokerages" class="res-section">
+      <h2>Brokerage Onboarding Guides</h2>
+      <div class="res-grid-2">
+        <div class="cell">
+          <h4>Traditional Brokerages</h4>
+          <ul>
+            <li><a href="https://www.fidelity.com" target="_blank">Fidelity</a></li>
+            <li><a href="https://www.schwab.com" target="_blank">Charles Schwab</a></li>
+            <li><a href="https://www.tdameritrade.com" target="_blank">TD Ameritrade</a></li>
+            <li><a href="https://www.vanguard.com" target="_blank">Vanguard</a></li>
+          </ul>
         </div>
-        <p class="fine mt-2">Consult a qualified tax professional for your specific situation.</p>
-      </section>
+        <div class="cell">
+          <h4>App-First Brokerages</h4>
+          <ul>
+            <li><a href="https://www.robinhood.com" target="_blank">Robinhood</a></li>
+            <li><a href="https://www.webull.com" target="_blank">Webull</a></li>
+            <li><a href="https://public.com" target="_blank">Public</a></li>
+            <li><a href="https://www.sofi.com/invest/" target="_blank">SoFi</a></li>
+          </ul>
+        </div>
+      </div>
+      <ol class="steps">
+        <li>Choose a brokerage based on fees, UX, and account type needed.</li>
+        <li>Complete KYC/identity verification and fund your account.</li>
+        <li>Connect to TradingView (optional) and set up Signal Hawk alert routing.</li>
+        <li>Decide your execution vehicle (SPXL vs SPY/VOO) based on risk tolerance.</li>
+      </ol>
+      <div class="affiliate-note">
+        <strong>Affiliate Disclosure:</strong> Some links may be affiliate links. We may earn a commission if you open and fund an account via our link. This helps support the service at no additional cost to you.
+      </div>
+    </section>
 
-      <!-- Brokerages & Onboarding -->
-      <section id="brokerages" class="section card">
-        <h2 class="text-[2.8rem] mb-3">Brokerage Onboarding Guides</h2>
-        <div class="grid md:grid-cols-2 gap-6">
-          <div>
-            <h3 class="font-semibold">Traditional Brokerages</h3>
-            <ul class="list-disc pl-6 text-blue-700">
-              <li><a target="_blank" href="https://www.fidelity.com">Fidelity</a></li>
-              <li><a target="_blank" href="https://www.schwab.com">Charles Schwab</a></li>
-              <li><a target="_blank" href="https://www.tdameritrade.com">TD Ameritrade</a></li>
-              <li><a target="_blank" href="https://www.vanguard.com">Vanguard</a></li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="font-semibold">App‑First Brokerages</h3>
-            <ul class="list-disc pl-6 text-blue-700">
-              <li><a target="_blank" href="https://www.robinhood.com">Robinhood</a></li>
-              <li><a target="_blank" href="https://www.webull.com">Webull</a></li>
-              <li><a target="_blank" href="https://public.com">Public</a></li>
-              <li><a target="_blank" href="https://www.sofi.com/invest/">SoFi</a></li>
-            </ul>
-          </div>
-        </div>
-        <ol class="list-decimal pl-6 mt-3 text-gray-800 space-y-1">
-          <li>Choose a brokerage based on fees, UX, and account type needed.</li>
-          <li>Complete KYC/identity verification and fund your account.</li>
-          <li>Connect to TradingView (optional) and set up Signal Hawk alert routing.</li>
-          <li>Decide your execution vehicle (SPXL vs SPY/VOO) based on risk tolerance.</li>
-        </ol>
-        <div class="mt-4 p-4 bg-yellow-50 rounded">
-          <p class="text-yellow-800"><strong>Affiliate Disclosure:</strong> Some links may be affiliate links. We may earn a commission if you open and fund an account via our link. This helps support the service at no additional cost to you.</p>
-        </div>
-      </section>
-
+    <!-- Analyzer CTA -->
+    <div id="analyzer-cta" class="analyzer-cta">
+      <h3>📈 Investment Growth Analyzer</h3>
+      <p>Backtest the Signal Hawk strategy against the S&amp;P 500, SPXL, and individual stocks with customizable date ranges.</p>
+      <a class="btn primary" href="{{ url_for('analyzer') }}">Open Analyzer</a>
     </div>
-  </main>
 
-  <footer class="bg-gray-800 text-white py-6">
-    <div class="max-w-6xl mx-auto px-4 text-center">
-      <p>&copy; 2025 Signal Hawk Capital. All rights reserved.</p>
-      <p class="mt-2"><a class="text-blue-300 hover:underline" href="/terms">Terms</a> | <a class="text-blue-300 hover:underline" href="/privacy">Privacy</a></p>
-    </div>
-  </footer>
-
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        const targetId = this.getAttribute('href');
-        const target = document.querySelector(targetId);
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          history.pushState(null, '', targetId);
-        }
-      });
-    });
-  });
-  </script>
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

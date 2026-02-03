@@ -2,7 +2,7 @@
 {% block content %}
 <style>
   .auth-card {
-    max-width: 440px; margin: 40px auto;
+    max-width: 480px; margin: 40px auto;
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius-lg); padding: 36px;
     box-shadow: 0 16px 50px rgba(0,0,0,0.3);
@@ -17,21 +17,23 @@
   }
   .auth-card input:focus { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
   .auth-card .btn { width: 100%; margin-top: 16px; font-size: 15px; padding: 13px; }
+  .auth-card .hint { color: var(--text-muted); font-size: 13px; }
 </style>
 
 <div class="auth-card">
-  <h1>Set new password</h1>
+  <h1>Set up your account</h1>
   <p class="sub">Account: <strong>{{ email }}</strong></p>
 
-  {% if error %}<div class="alert err">{{ error }}</div>{% endif %}
-
-  <form method="POST" action="{{ url_for('reset_password') }}">
+  <form method="POST" action="{{ url_for('account_setup') }}">
     <input type="hidden" name="token" value="{{ token }}">
-    <label>New password</label>
+    <label>Phone (for alerts)</label>
+    <input name="phone" type="tel" placeholder="+1 555 123 4567">
+    <label>Password</label>
     <input name="password" type="password" minlength="10" placeholder="At least 10 characters" required>
     <label>Confirm password</label>
-    <input name="password_confirm" type="password" minlength="10" placeholder="Re-enter password" required>
-    <button class="btn primary" type="submit">Update password</button>
+    <input name="confirm_password" type="password" minlength="10" placeholder="Re-enter password" required>
+    <button class="btn primary" type="submit">Complete Setup</button>
   </form>
+  <p class="hint" style="margin-top:14px;text-align:center;">Setup link expires in 24 hours.</p>
 </div>
 {% endblock %}

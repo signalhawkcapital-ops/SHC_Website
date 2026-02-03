@@ -17,21 +17,22 @@
   }
   .auth-card input:focus { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
   .auth-card .btn { width: 100%; margin-top: 16px; font-size: 15px; padding: 13px; }
+  .auth-links { text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-muted); }
+  .auth-links a { color: var(--brand); text-decoration: none; }
 </style>
 
 <div class="auth-card">
-  <h1>Set new password</h1>
-  <p class="sub">Account: <strong>{{ email }}</strong></p>
+  <h1>Send Setup Link</h1>
+  <p class="sub">Enter the email you subscribed with and we'll send a link to set up your password.</p>
 
-  {% if error %}<div class="alert err">{{ error }}</div>{% endif %}
-
-  <form method="POST" action="{{ url_for('reset_password') }}">
-    <input type="hidden" name="token" value="{{ token }}">
-    <label>New password</label>
-    <input name="password" type="password" minlength="10" placeholder="At least 10 characters" required>
-    <label>Confirm password</label>
-    <input name="password_confirm" type="password" minlength="10" placeholder="Re-enter password" required>
-    <button class="btn primary" type="submit">Update password</button>
+  <form method="POST" action="{{ url_for('request_setup') }}">
+    <label>Email</label>
+    <input name="email" type="email" placeholder="you@example.com" required autofocus>
+    <button class="btn primary" type="submit">Email me a setup link</button>
   </form>
+
+  <div class="auth-links">
+    <a href="{{ url_for('login') }}">Back to login</a>
+  </div>
 </div>
 {% endblock %}
