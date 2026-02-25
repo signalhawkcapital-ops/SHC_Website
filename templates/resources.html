@@ -1,252 +1,253 @@
-{% extends 'layout.html' %}
+{% extends "base.html" %}
+{% block title %}Resources — Wingspan{% endblock %}
 {% block content %}
-<style>
-  .res-header { margin-bottom: 32px; }
-  .res-header p { color: var(--text-muted); font-size: 16px; max-width: 660px; }
-  .res-layout { display: grid; grid-template-columns: 220px 1fr; gap: 32px; }
-  @media (max-width: 900px) { .res-layout { grid-template-columns: 1fr; } .res-sidebar { display: none; } }
-  .res-sidebar {
-    position: sticky; top: 84px; align-self: start;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 20px;
-  }
-  .res-sidebar h3 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; margin: 0 0 14px; color: var(--text); }
-  .res-sidebar ul { list-style: none; padding: 0; margin: 0; }
-  .res-sidebar li { margin-bottom: 10px; }
-  .res-sidebar a { color: var(--brand); text-decoration: none; font-size: 14px; transition: color 0.2s; }
-  .res-sidebar a:hover { color: var(--text); }
 
-  .res-content { display: flex; flex-direction: column; gap: 28px; }
-  .res-section {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 28px;
-  }
-  .res-section h2 {
-    font-family: 'Space Grotesk', sans-serif; font-size: 22px; margin: 0 0 14px;
-    letter-spacing: -0.02em;
-  }
-  .res-section h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; color: var(--text); }
-  .res-section p { color: var(--text-muted); font-size: 15px; line-height: 1.7; margin: 0 0 10px; }
-  .res-section ul { color: var(--text-muted); font-size: 15px; line-height: 1.7; padding-left: 22px; margin: 8px 0 12px; }
-  .res-section li { margin-bottom: 4px; }
-  .res-section a { color: var(--brand); text-decoration: none; }
-  .res-section a:hover { text-decoration: underline; }
-  .res-section .fine { font-size: 13px; color: var(--text-muted); opacity: 0.7; margin-top: 12px; }
-  .res-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
-  @media (max-width: 600px) { .res-grid-2 { grid-template-columns: 1fr; } }
-  .res-grid-2 .cell { background: rgba(0,0,0,0.15); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-  .res-grid-2 .cell h4 { font-size: 15px; margin: 0 0 8px; color: var(--text); }
-  .res-grid-2 .cell ul { margin: 0; padding-left: 18px; font-size: 14px; }
-  .res-grid-2 .cell a { color: var(--brand); }
-  .res-learn { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; font-size: 14px; }
-  .res-learn a { color: var(--brand); }
-  .videobox {
-    background: rgba(0,0,0,0.2); border: 1px dashed var(--border2);
-    border-radius: var(--radius); height: 200px;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-muted); font-size: 14px; margin-top: 14px;
-  }
-  .affiliate-note {
-    background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25);
-    border-radius: var(--radius); padding: 14px; margin-top: 16px;
-    font-size: 14px; color: #fbbf24; line-height: 1.5;
-  }
-  .res-cta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
-  .steps { list-style: decimal; padding-left: 22px; margin-top: 12px; }
-  .steps li { margin-bottom: 6px; }
-  .analyzer-cta {
-    background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(34,197,94,0.05));
-    border: 1px solid rgba(59,130,246,0.2);
-    border-radius: var(--radius-lg); padding: 24px; text-align: center; margin-top: 8px;
-  }
-  .analyzer-cta h3 { margin: 0 0 8px; font-size: 18px; }
-  .analyzer-cta p { margin: 0 0 14px; }
+<style>
+.res-hero{text-align:center;padding:40px 0 32px}
+.res-hero h1{font-size:28px;font-weight:700;margin-bottom:6px}
+.res-hero p{color:var(--text-dim);font-size:14px}
+.res-nav{display:flex;gap:6px;margin-bottom:32px;flex-wrap:wrap}
+.res-nav a{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;color:var(--text-dim);background:var(--surface);border:1px solid var(--border);text-decoration:none;transition:all .15s}
+.res-nav a:hover,.res-nav a.active{color:var(--accent-bright);border-color:var(--accent);background:var(--accent-glow)}
+.res-section{margin-bottom:48px}
+.res-section h2{font-size:20px;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.res-section h2 .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+.res-section h3{font-size:15px;font-weight:600;margin:20px 0 8px;color:var(--cyan)}
+.res-section p,.res-section li{font-size:13px;line-height:1.7;color:var(--text-dim)}
+.res-section ul{padding-left:20px;margin:8px 0}
+.res-section li{margin-bottom:6px}
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.req-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+.req-card h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);margin-bottom:10px}
+.step-grid{display:grid;gap:16px;margin:16px 0}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;padding-left:56px}
+.step-num{position:absolute;left:16px;top:18px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.step h4{font-size:14px;font-weight:600;margin-bottom:6px}
+.step p{font-size:12px;color:var(--text-dim);line-height:1.6}
+.warn{background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.6;color:var(--amber);margin:16px 0}
+.info{background:var(--accent-glow);border:1px solid var(--accent);border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.6;color:var(--accent-bright);margin:16px 0}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface2);padding:2px 6px;border-radius:4px}
+@media(max-width:600px){.req-grid{grid-template-columns:1fr}}
 </style>
 
-<div class="res-header">
-  <h1>Investor Resources &amp; Onboarding</h1>
-  <p>Everything you need — from investment basics and account setup to a deep dive on the Signal Hawk Strategy.</p>
+<div class="res-hero">
+  <h1>Resources</h1>
+  <p>Everything you need to trade the Wingspan strategy</p>
 </div>
 
-<div class="res-layout">
-  <aside class="res-sidebar">
-    <h3>Resources</h3>
-    <ul>
-      <li><a href="#strategy">Signal Hawk Strategy</a></li>
-      <li><a href="#fundamentals">Investment Fundamentals</a></li>
-      <li><a href="#accounts">Account Types &amp; Taxes</a></li>
-      <li><a href="#brokerages">Brokerage Onboarding</a></li>
-      <li><a href="#analyzer-cta">Growth Analyzer</a></li>
-    </ul>
-  </aside>
+<nav class="res-nav">
+  <a href="#quickstart" class="active">Quick Start</a>
+  <a href="#requirements">Requirements</a>
+  <a href="#playbook">Daily Playbook</a>
+  <a href="#scoring">Trap Scoring</a>
+  <a href="#hedging">Hedging</a>
+  <a href="#faq">FAQ</a>
+</nav>
 
-  <div class="res-content">
+<!-- ═══════════════════════════════════════ -->
+<section class="res-section" id="quickstart">
+  <h2><span class="dot"></span> Quick Start Guide</h2>
+  <p>Wingspan trades 0DTE (zero days to expiration) SPX butterfly spreads. You buy two butterflies at the open — one call-side, one put-side — centered around the opening price. During the day, you either trap the winning side or hedge against extreme moves. Everything expires at 4:00 PM ET.</p>
 
-    <!-- Signal Hawk Strategy -->
-    <section id="strategy" class="res-section">
-      <h2>Signal Hawk Strategy — Overview</h2>
-      <p>Signal Hawk is a long-term, rules-based alert service that seeks to outperform the S&amp;P 500 by being invested during broad uptrends and reducing exposure during major drawdowns. Execution is typically through SPXL (3x S&amp;P 500 ETF) for risk-tolerant users or SPY/VOO for lower volatility.</p>
-      <ul>
-        <li>Data-driven entries/exits using price-trend regime filters</li>
-        <li>Downside-mitigation rules to avoid prolonged bear markets</li>
-        <li>Focus on time in market during favorable regimes</li>
-      </ul>
-      <div class="videobox">Video Placeholder: Strategy Deep Dive (coming soon)</div>
-      <div class="res-cta-row">
-        <a class="btn primary" href="{{ url_for('terms') }}">View Terms &amp; Conditions</a>
-        <a class="btn ghost" href="{{ url_for('disclosures') }}">Disclosures</a>
-      </div>
-      <p class="fine">*The whitepaper (coming soon) will provide methodology details, assumptions, and limitations.</p>
-    </section>
-
-    <!-- Investment Fundamentals -->
-    <section id="fundamentals" class="res-section">
-      <h2>Investment Fundamentals</h2>
-
-      <h3 id="compounding">Compounding &amp; Long-Term Growth</h3>
-      <p>Compounding is growth on growth — reinvested returns generate additional returns over time.</p>
-      <ul>
-        <li>Start early — time in the market matters more than timing the market.</li>
-        <li>Keep costs low — expense ratios and fees compound against you.</li>
-        <li>Stay consistent — automatic contributions help you capture more compounding periods.</li>
-      </ul>
-      <div class="res-learn">
-        Learn more:
-        <a href="https://www.investopedia.com/terms/c/compounding.asp" target="_blank">Investopedia: Compounding</a> ·
-        <a href="https://www.khanacademy.org/economics-finance-domain/core-finance/interest-tutorial/compound-interest-tutorial" target="_blank">Khan Academy: Compound Interest</a>
-      </div>
-
-      <h3 id="dca">Dollar-Cost Averaging (DCA)</h3>
-      <p>DCA means investing a fixed amount on a regular schedule to reduce the impact of volatility.</p>
-      <ul>
-        <li>Smooths entry points across market cycles.</li>
-        <li>Helps avoid large, poorly timed lump-sum purchases.</li>
-        <li>Pairs well with automatic contributions (payroll or monthly transfers).</li>
-      </ul>
-      <div class="res-learn">
-        Learn more:
-        <a href="https://www.investopedia.com/terms/d/dollarcostaveraging.asp" target="_blank">Investopedia: DCA</a>
-      </div>
-
-      <h3 id="diversification">Diversification &amp; Asset Allocation</h3>
-      <p>Diversification spreads risk across assets; asset allocation aligns portfolios with risk tolerance and goals.</p>
-      <ul>
-        <li>Mix asset classes (stocks, bonds, cash; optionally real assets) to reduce single-asset risk.</li>
-        <li>Set a strategic allocation and rebalance periodically to maintain risk targets.</li>
-        <li>Use broad, low-cost index ETFs for core exposures (e.g., total market, S&amp;P 500, aggregate bonds).</li>
-      </ul>
-      <div class="res-learn">
-        Learn more:
-        <a href="https://www.investopedia.com/terms/d/diversification.asp" target="_blank">Investopedia: Diversification</a>
-      </div>
-
-      <h3 id="risk">Volatility, Drawdowns &amp; Risk Management</h3>
-      <p>Markets fluctuate. Risk management focuses on limiting large losses and staying invested appropriately.</p>
-      <ul>
-        <li>Expect drawdowns — even long bull markets experience 10–20% declines.</li>
-        <li>Align allocation with your time horizon and capacity for loss.</li>
-        <li>Use rules-based approaches (e.g., trend filters) to reduce prolonged bear-market exposure.</li>
-      </ul>
-      <div class="res-learn">
-        Learn more:
-        <a href="https://www.investopedia.com/terms/d/drawdown.asp" target="_blank">Investopedia: Drawdown</a>
-      </div>
-
-      <h3 id="taxes">Taxes: STCG vs LTCG</h3>
-      <p>Holding periods matter: short-term capital gains (STCG) are typically taxed as ordinary income; long-term (LTCG) often at lower rates.</p>
-      <ul>
-        <li>Consider placing higher-turnover strategies in tax-advantaged accounts when possible.</li>
-        <li>Harvest losses thoughtfully and avoid wash-sale violations.</li>
-        <li>Track cost basis and holding periods for accurate reporting.</li>
-      </ul>
-      <div class="res-learn">
-        Learn more:
-        <a href="https://www.irs.gov/taxtopics/tc409" target="_blank">IRS Topic 409 – Capital Gains &amp; Losses</a> ·
-        <a href="https://www.investopedia.com/articles/personal-finance/100515/guide-capital-gains-tax-rates.asp" target="_blank">Investopedia: Capital Gains Tax Guide</a>
-      </div>
-
-      <div class="res-grid-2">
-        <div class="cell">
-          <h4>Learn the Basics</h4>
-          <ul>
-            <li><a href="https://www.investopedia.com" target="_blank">Investopedia</a></li>
-            <li><a href="https://www.khanacademy.org/economics-finance-domain/core-finance" target="_blank">Khan Academy – Core Finance</a></li>
-            <li><a href="https://www.morningstar.com/learn" target="_blank">Morningstar Investing Classroom</a></li>
-          </ul>
-        </div>
-        <div class="cell">
-          <h4>Stay Informed</h4>
-          <ul>
-            <li><a href="https://www.bloomberg.com" target="_blank">Bloomberg</a></li>
-            <li><a href="https://www.wsj.com" target="_blank">The Wall Street Journal</a></li>
-            <li><a href="https://financecharts.com" target="_blank">FinanceCharts</a></li>
-          </ul>
-        </div>
-      </div>
-      <p class="fine">Educational only; not investment, tax, or legal advice. Consult qualified professionals for personalized guidance.</p>
-    </section>
-
-    <!-- Account Types & Taxes -->
-    <section id="accounts" class="res-section">
-      <h2>Account Types &amp; Taxes (US)</h2>
-      <div class="res-grid-2">
-        <div class="cell">
-          <h4>Taxable Accounts</h4>
-          <p style="font-size:14px;color:var(--text-muted);">Standard brokerage accounts with capital gains/losses. Consider tax-efficient holding periods and realized gains.</p>
-        </div>
-        <div class="cell">
-          <h4>Tax-Advantaged Accounts</h4>
-          <ul>
-            <li>Roth IRA – tax-free growth/withdrawals (subject to rules)</li>
-            <li>Traditional IRA – tax-deferred; withdrawals taxed as income</li>
-            <li>401(k)/Solo-401(k) – employer or self-employed plans</li>
-          </ul>
-        </div>
-      </div>
-      <p class="fine">Consult a qualified tax professional for your specific situation.</p>
-    </section>
-
-    <!-- Brokerage Onboarding -->
-    <section id="brokerages" class="res-section">
-      <h2>Brokerage Onboarding Guides</h2>
-      <div class="res-grid-2">
-        <div class="cell">
-          <h4>Traditional Brokerages</h4>
-          <ul>
-            <li><a href="https://www.fidelity.com" target="_blank">Fidelity</a></li>
-            <li><a href="https://www.schwab.com" target="_blank">Charles Schwab</a></li>
-            <li><a href="https://www.tdameritrade.com" target="_blank">TD Ameritrade</a></li>
-            <li><a href="https://www.vanguard.com" target="_blank">Vanguard</a></li>
-          </ul>
-        </div>
-        <div class="cell">
-          <h4>App-First Brokerages</h4>
-          <ul>
-            <li><a href="https://www.robinhood.com" target="_blank">Robinhood</a></li>
-            <li><a href="https://www.webull.com" target="_blank">Webull</a></li>
-            <li><a href="https://public.com" target="_blank">Public</a></li>
-            <li><a href="https://www.sofi.com/invest/" target="_blank">SoFi</a></li>
-          </ul>
-        </div>
-      </div>
-      <ol class="steps">
-        <li>Choose a brokerage based on fees, UX, and account type needed.</li>
-        <li>Complete KYC/identity verification and fund your account.</li>
-        <li>Connect to TradingView (optional) and set up Signal Hawk alert routing.</li>
-        <li>Decide your execution vehicle (SPXL vs SPY/VOO) based on risk tolerance.</li>
-      </ol>
-      <div class="affiliate-note">
-        <strong>Affiliate Disclosure:</strong> Some links may be affiliate links. We may earn a commission if you open and fund an account via our link. This helps support the service at no additional cost to you.
-      </div>
-    </section>
-
-    <!-- Analyzer CTA -->
-    <div id="analyzer-cta" class="analyzer-cta">
-      <h3>📈 Investment Growth Analyzer</h3>
-      <p>Backtest the Signal Hawk strategy against the S&amp;P 500, SPXL, and individual stocks with customizable date ranges.</p>
-      <a class="btn primary" href="{{ url_for('analyzer') }}">Open Analyzer</a>
+  <div class="step-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Pre-Market (9:00–9:30 AM)</h4>
+      <p>Open Wingspan and click <strong>Analyze & Generate Strategy</strong>. The engine fetches live SPX/VIX data and calculates your strikes, widths, and trap alerts. Copy the option chains to your broker.</p>
     </div>
-
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Open (9:30–9:35 AM)</h4>
+      <p>Buy both butterfly spreads as limit orders near the mid price. The call fly and put fly should fill at roughly equal debits. Your total risk is the combined debit paid.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Monitor (9:35 AM–1:30 PM)</h4>
+      <p>Watch for SPX to breach your trap alert levels (shown on the strategy page). No action needed until then — the position profits from theta decay as the day progresses.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Trap or Hedge (1:30–2:30 PM)</h4>
+      <p><strong>If trap score is 🟢 GREEN/YELLOW:</strong> SPX has moved into one fly's profit zone. Buy the center trap butterfly to lock in gains. Close the losing side for partial credit.</p>
+      <p style="margin-top:4px"><strong>If trap score is 🔴 RED:</strong> Extended move day — skip the trap. Buy a directional spread in the move direction to convert the loss into a win.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <h4>Expiration (3:30–4:00 PM)</h4>
+      <p>SPX options settle on the closing print at 4:00 PM ET. If trapped, hold to expiry. If not trapped, close both sides in the last 30 minutes to recover residual value.</p>
+    </div>
   </div>
-</div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<section class="res-section" id="requirements">
+  <h2><span class="dot"></span> Requirements</h2>
+
+  <div class="req-grid">
+    <div class="req-card">
+      <h4>Broker Requirements</h4>
+      <ul>
+        <li><strong>SPX options access</strong> — must be able to trade S&P 500 index options (not SPY)</li>
+        <li><strong>Multi-leg orders</strong> — ability to enter butterfly spreads as a single order</li>
+        <li><strong>0DTE trading enabled</strong> — some brokers restrict same-day expiration trades</li>
+        <li><strong>Level 3 options approval</strong> — required for spread trading at most brokers</li>
+      </ul>
+      <p style="margin-top:8px;font-size:11px;color:var(--text-muted)">Compatible brokers: TD Ameritrade/Schwab, Interactive Brokers, Tastytrade, E*TRADE. Check with your broker for specific 0DTE policies.</p>
+    </div>
+    <div class="req-card">
+      <h4>Capital Requirements</h4>
+      <ul>
+        <li><strong>Minimum per contract:</strong> ~$800–$2,000 depending on VIX (covers the opening debit for both flies)</li>
+        <li><strong>Recommended starting capital:</strong> $5,000–$10,000 for 1–3 contracts with proper position sizing</li>
+        <li><strong>Pattern Day Trader rule:</strong> Not applicable — SPX options are cash-settled index options, not equities</li>
+        <li><strong>Margin:</strong> Butterfly spreads are defined-risk. Maximum loss = debit paid. No margin calls.</li>
+      </ul>
+    </div>
+    <div class="req-card">
+      <h4>Knowledge Requirements</h4>
+      <ul>
+        <li>Understanding of butterfly spread mechanics (max profit at center, zero outside wings)</li>
+        <li>Comfort with options Greeks — particularly theta (time decay) and delta (directional exposure)</li>
+        <li>Ability to execute multi-leg orders quickly during market hours</li>
+        <li>Familiarity with SPX settlement procedures (PM settlement, cash-settled)</li>
+      </ul>
+    </div>
+    <div class="req-card">
+      <h4>Time Commitment</h4>
+      <ul>
+        <li><strong>Pre-market:</strong> 5 min — generate strategy, copy chains</li>
+        <li><strong>Open:</strong> 5 min — enter orders</li>
+        <li><strong>Midday:</strong> Passive monitoring — set price alerts at trap levels</li>
+        <li><strong>Trap window:</strong> 10 min — execute trap or hedge at 1:30–2:30 PM</li>
+        <li><strong>Total:</strong> ~20–30 minutes of active time per day</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn">
+    ⚠️ <strong>Risk Disclosure:</strong> Options trading involves substantial risk of loss. 0DTE options are particularly sensitive to rapid price movements. Past backtest results do not guarantee future performance. Never trade with money you cannot afford to lose. See <a href="/disclosures" style="color:var(--amber)">full risk disclosures</a>.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<section class="res-section" id="playbook">
+  <h2><span class="dot"></span> Daily Playbook</h2>
+
+  <h3>Position Structure</h3>
+  <p>The "Wingspan" (a.k.a. "Batman") position is two butterfly spreads centered symmetrically around the SPX opening price:</p>
+  <ul>
+    <li><strong>Call butterfly:</strong> <span class="mono">Open / Open+W / Open+2W</span> — profits if SPX rises moderately</li>
+    <li><strong>Put butterfly:</strong> <span class="mono">Open / Open−W / Open−2W</span> — profits if SPX falls moderately</li>
+  </ul>
+  <p>With gap = 0 (recommended), the inner wings overlap at the open price, eliminating any dead zone. The combined position profits if SPX settles anywhere within ±2W of the open.</p>
+
+  <h3>Width Sizing</h3>
+  <p>Width is set to <strong>60% of the VIX-implied expected move</strong>. This places the max profit peak at the most likely settlement point while keeping the outer wings beyond 1σ. The width scales automatically with SPX level and VIX — wider when volatility is high, narrower when it's low.</p>
+
+  <h3>Trap Mechanics</h3>
+  <p>When SPX moves directionally, one butterfly enters its profit zone. The trap locks in that profit by buying a third butterfly (1.5× wider) centered between the open and the winning fly's center. This widens the profit tent and reduces sensitivity to where SPX settles.</p>
+  <ul>
+    <li><strong>Trigger:</strong> SPX moves ≥15% of expected move from open (regime-adjusted)</li>
+    <li><strong>Timing:</strong> Best at 1:30–2:30 PM when 70%+ of theta has decayed — trap debits are cheapest</li>
+    <li><strong>Losing side:</strong> Close for ~15% of original debit to recover capital</li>
+  </ul>
+
+  <h3>Directional Hedge</h3>
+  <p>On extended-move days (trap score RED, SPX beyond 1× EM), skip the trap. Instead, buy a cheap directional put or call spread in the direction of the move. Cost is ~$0.50 after midday. If SPX continues (77% of the time), the spread converts what would have been a full loss into a partial or full win.</p>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<section class="res-section" id="scoring">
+  <h2><span class="dot"></span> Trap Score System</h2>
+  <p>The composite trap score (0–100) grades each day's trap opportunity using three signals:</p>
+
+  <div class="req-grid" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="req-card" style="border-top:3px solid var(--green)">
+      <h4>Move / EM (60% weight)</h4>
+      <p style="font-size:12px;color:var(--text-dim)">How far SPX has moved relative to the expected move. Below 0.7× EM = excellent (butterflies still in profit zone). Above 1.0× EM = danger (extended past the wings).</p>
+    </div>
+    <div class="req-card" style="border-top:3px solid var(--cyan)">
+      <h4>Range Expansion (30% weight)</h4>
+      <p style="font-size:12px;color:var(--text-dim)">Today's range vs the 5-day average. Contracted range = mean-reverting day = great for butterflies. Expanded range = trending day = skip the trap.</p>
+    </div>
+    <div class="req-card" style="border-top:3px solid var(--purple)">
+      <h4>VIX Trend (10% weight)</h4>
+      <p style="font-size:12px;color:var(--text-dim)">VIX dropping from its 5-day average = stabilizing conditions = slightly better trap odds. Minor tiebreaker signal.</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0">
+    <div class="req-card" style="text-align:center;border-top:3px solid var(--green);padding:12px">
+      <div style="font-size:20px;font-weight:700;color:var(--green)">85–100</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Grade A — Full trap (1.5× width)</div>
+    </div>
+    <div class="req-card" style="text-align:center;border-top:3px solid var(--cyan);padding:12px">
+      <div style="font-size:20px;font-weight:700;color:var(--cyan)">60–84</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Grade B — Full trap</div>
+    </div>
+    <div class="req-card" style="text-align:center;border-top:3px solid var(--amber);padding:12px">
+      <div style="font-size:20px;font-weight:700;color:var(--amber)">40–59</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Grade C — Conservative trap</div>
+    </div>
+    <div class="req-card" style="text-align:center;border-top:3px solid var(--red);padding:12px">
+      <div style="font-size:20px;font-weight:700;color:var(--red)">0–39</div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:4px">Grade D — Skip trap, hedge instead</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<section class="res-section" id="hedging">
+  <h2><span class="dot"></span> Hedging Extended Moves</h2>
+  <p>~24% of days, SPX moves beyond 1× EM and both flies expire worthless. The directional hedge converts these losses:</p>
+
+  <div class="step-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Detect</h4>
+      <p>By 12:30–1:00 PM, SPX has already moved past 1× EM. The trap score reads 🔴 RED (below 40). This signals an extended-move day.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Hedge</h4>
+      <p>Buy a directional debit spread (call spread if SPX is up, put spread if down) at the current price. Width = 0.5× butterfly width. Cost: ~$0.30–$0.80 (cheap because 50%+ theta is already burned).</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Hold</h4>
+      <p>If SPX continues in the same direction (77% probability based on intraday stick rates), the spread pays out. The payoff often exceeds the combined batman debit + hedge cost, converting a loss into a net win.</p>
+    </div>
+  </div>
+
+  <div class="info">
+    💡 The hedge costs ~$50/contract, fires only on worst days, and in backtesting reduced max drawdown 57% while adding 12% to total return.
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<section class="res-section" id="faq">
+  <h2><span class="dot"></span> FAQ</h2>
+
+  <h3>Why SPX and not SPY?</h3>
+  <p>SPX options are cash-settled (no stock assignment risk), European-style (no early exercise), and receive favorable 60/40 tax treatment under Section 1256. SPX also has tighter bid-ask spreads at standard strikes.</p>
+
+  <h3>What's the worst-case loss per day?</h3>
+  <p>Your maximum loss is the total debit paid for both butterflies plus any trap or hedge cost. Typically $8–$19 per point of width, or $800–$1,900 per contract. The directional hedge limits this further on extreme days.</p>
+
+  <h3>Can I trade this with a small account?</h3>
+  <p>Yes. Butterfly spreads are defined-risk. A single contract requires $800–$2,000 in buying power depending on the day's width and VIX. No margin expansion is possible since max loss = debit paid.</p>
+
+  <h3>Do I need to watch the market all day?</h3>
+  <p>No. Set price alerts at the trap trigger levels shown on the strategy page. The only active decision window is 1:30–2:30 PM (trap or hedge). Total active time is ~20 minutes per day.</p>
+
+  <h3>What about commissions?</h3>
+  <p>Each butterfly is 3 legs (buy/sell/buy). Most brokers charge $0.50–$0.65 per contract per leg. For a single batman position (2 flies = 6 legs), expect $3–$4 in commissions. Add another $3–$4 for the trap. Total: ~$6–$8 per day per contract.</p>
+
+  <h3>How were the backtest results calculated?</h3>
+  <p>All butterfly debits are priced using Black-Scholes with a 0.85× VIX discount (variance risk premium adjustment) and time-decay function. Real SPX/VIX OHLC data from Yahoo Finance, 2020–2026. See the <a href="/methodology" style="color:var(--cyan)">Methodology</a> page for complete details.</p>
+
+  <h3>What happens on high-VIX days (VIX > 30)?</h3>
+  <p>The engine automatically widens the butterflies (up to 80pt cap) to match the larger expected moves. The trap trigger also widens (25% of EM vs 15% in normal vol). High-vol days have higher debits but also higher max profit potential.</p>
+</section>
+
 {% endblock %}

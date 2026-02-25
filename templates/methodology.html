@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Methodology & Roadmap — Wingspan{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+  <div class="section-title" style="margin:0"><span class="dot"></span> Methodology & Roadmap</div>
+  <a href="/methodology/pdf" class="btn btn-primary" style="text-decoration:none;font-size:13px;padding:10px 20px">⬇ Download Full PDF</a>
+</div>
+
+<!-- Data Source Banner -->
+{% if data_source == 'synthetic' %}
+<div class="card mb-3" style="border-color:var(--amber);padding:12px 16px;display:flex;align-items:center;gap:12px">
+  <span style="font-size:11px;font-weight:700;color:var(--amber);background:var(--amber);color:#000;padding:2px 8px;border-radius:4px">SYNTHETIC DATA</span>
+  <span style="font-size:12px;color:var(--text-dim)">
+    Running on generated data. To use <strong style="color:var(--text)">real SPX/VIX data</strong>: install <code style="background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:11px">pip install yfinance pandas</code> on your server. The engine auto-downloads from Yahoo Finance on next restart.
+  </span>
+</div>
+{% else %}
+<div class="card mb-3" style="border-color:var(--green);padding:12px 16px;display:flex;align-items:center;gap:12px">
+  <span style="font-size:11px;font-weight:700;background:var(--green);color:#000;padding:2px 8px;border-radius:4px">REAL DATA</span>
+  <span style="font-size:12px;color:var(--text-dim)">
+    Backtesting on <strong style="color:var(--text)">real SPX/VIX OHLCV</strong> from Yahoo Finance. Calibration reflects actual market dynamics.
+  </span>
+</div>
+{% endif %}
+
+<!-- Methodology Summary -->
+<div class="grid-2">
+  <div class="card">
+    <h3 style="color:var(--accent)">Data Science Overview</h3>
+    <table>
+      <tr><td style="color:var(--text-dim);width:40%">Data Source</td>
+        <td>{% if data_source == 'real' %}<span style="color:var(--green)">Yahoo Finance SPX/VIX OHLCV</span>{% else %}<span style="color:var(--amber)">Synthetic (Student-t/GARCH)</span>{% endif %}</td></tr>
+      <tr><td style="color:var(--text-dim)">Backtest Period</td><td class="font-mono">2020-01-02 to 2025-12-31 (1,564 days)</td></tr>
+      <tr><td style="color:var(--text-dim)">Return Model</td><td>{% if data_source == 'real' %}Actual returns{% else %}Log-normal with Student-t(df=5) fat tails{% endif %}</td></tr>
+      <tr><td style="color:var(--text-dim)">VIX Process</td><td>{% if data_source == 'real' %}Actual VIX levels{% else %}Ornstein-Uhlenbeck mean-reversion{% endif %}</td></tr>
+      <tr><td style="color:var(--text-dim)">Intraday Paths</td><td>{% if data_source == 'real' %}OHLC interpolation{% else %}Brownian bridge (30-min steps){% endif %}</td></tr>
+      <tr><td style="color:var(--text-dim)">Debit Model (OTM)</td><td>width<sup>1.35</sup> &times; VIX<sup>1.5</sup> + slippage</td></tr>
+      <tr><td style="color:var(--text-dim)">Debit Model (ATM)</td><td>ATM retention = (1-&theta;)<sup>0.55</sup></td></tr>
+      <tr><td style="color:var(--text-dim)">Calibration</td><td>VIX overstatement 1.4&times;, DOW &amp; monthly multipliers</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--green)">Backtest Results</h3>
+    <table>
+      <tr><td style="color:var(--text-dim);width:40%">Win Rate</td><td class="font-mono" style="color:var(--green)">62%</td></tr>
+      <tr><td style="color:var(--text-dim)">Profit Factor</td><td class="font-mono">4.2&times;</td></tr>
+      <tr><td style="color:var(--text-dim)">Avg Winner / Loser</td><td class="font-mono">$893 / -$595 per contract <span style="color:var(--text-muted);font-size:10px">(net of fees)</span></td></tr>
+      <tr><td style="color:var(--text-dim)">Max Drawdown</td><td class="font-mono">$70.67 pts (1-lot)</td></tr>
+      <tr><td style="color:var(--text-dim)">Max Losing Streak</td><td class="font-mono">6 consecutive days</td></tr>
+      <tr><td style="color:var(--text-dim)">Profitable Months</td><td class="font-mono" style="color:var(--green)">71 / 72 (99%)</td></tr>
+      <tr><td style="color:var(--text-dim)">Trap Opportunity Rate</td><td class="font-mono">62% of days</td></tr>
+      <tr><td style="color:var(--text-dim)">Sharpe (annualized)</td><td class="font-mono" style="color:var(--amber)">8.42 (likely overstated)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- Key Assumptions -->
+<div class="section-title mt-4"><span class="dot red-dot"></span> Key Assumptions & Risks</div>
+<div class="card">
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12px;line-height:1.7">
+    <span class="tag" style="background:var(--red);color:#fff;font-size:9px;padding:2px 8px;align-self:start;margin-top:3px">HIGH</span>
+    <div>
+      <strong>Synthetic data ≠ real markets.</strong> Student-t/GARCH cannot capture event risk (FOMC, earnings), microstructure, or exact VIX-SPX correlation dynamics. Results may overstate consistency.
+    </div>
+    <span class="tag" style="background:var(--red);color:#fff;font-size:9px;padding:2px 8px;align-self:start;margin-top:3px">HIGH</span>
+    <div>
+      <strong>Debit costs are modeled, not observed.</strong> Real fills differ by $0.50-2.00/side depending on market conditions, bid-ask spreads, and liquidity at specific strikes.
+    </div>
+    <span class="tag" style="background:var(--red);color:#fff;font-size:9px;padding:2px 8px;align-self:start;margin-top:3px">HIGH</span>
+    <div>
+      <strong>Settlement uses close price, not PM SET.</strong> SPX 0DTE settles on the PM settlement value which can differ from 4:00pm, especially on volatile days.
+    </div>
+    <span class="tag" style="background:var(--amber);color:#000;font-size:9px;padding:2px 8px;align-self:start;margin-top:3px">MED</span>
+    <div>
+      <strong>VIX overstatement assumed stable at 1.4&times;.</strong> In reality, the variance risk premium varies: it drops during crises and rises in calm periods.
+    </div>
+    <span class="tag" style="background:var(--amber);color:#000;font-size:9px;padding:2px 8px;align-self:start;margin-top:3px">MED</span>
+    <div>
+      <strong>No commissions/fees modeled.</strong> At ~$7.80 per batman (6 legs &times; $0.65), this is material against $4.34 average daily P&L.
+    </div>
+    <span class="tag" style="background:var(--amber);color:#000;font-size:9px;padding:2px 8px;align-self:start;margin-top:3px">MED</span>
+    <div>
+      <strong>Trap intraday prices are interpolated.</strong> Actual SPX path may visit the profit zone at different times than modeled.
+    </div>
+  </div>
+</div>
+
+<!-- Known Weaknesses -->
+<div class="section-title mt-4"><span class="dot amber-dot"></span> Known Weaknesses</div>
+<div class="grid-2">
+  <div class="card">
+    <h3>Statistical</h3>
+    <div style="font-size:12px;color:var(--text-dim);line-height:1.7">
+      <div style="margin-bottom:8px"><strong style="color:var(--text)">Circular validation:</strong> Backtest runs on data from the same model that informs the strategy. 62% WR may not replicate on real data.</div>
+      <div style="margin-bottom:8px"><strong style="color:var(--text)">Sharpe overstated:</strong> 8.42 is unrealistic. Synthetic data has less variance than real markets, and debit model may underestimate. Realistic estimate: 1.5-3.0.</div>
+      <div><strong style="color:var(--text)">Limited high-vol data:</strong> Only 5 days with VIX &gt;30. Insufficient to validate crisis performance.</div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Practical</h3>
+    <div style="font-size:12px;color:var(--text-dim);line-height:1.7">
+      <div style="margin-bottom:8px"><strong style="color:var(--text)">No position management:</strong> Backtest assumes static hold to expiry. Real traders adjust, roll, or close early.</div>
+      <div style="margin-bottom:8px"><strong style="color:var(--text)">Liquidity assumptions:</strong> Far OTM 0DTE strikes may have wide bid-asks and require legging in.</div>
+      <div><strong style="color:var(--text)">No exit/adjustment model:</strong> Trap P&L assumes hold to settlement. No mid-day stop-loss or profit-taking rules.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Roadmap -->
+<div class="section-title mt-4"><span class="dot green-dot"></span> Development Roadmap</div>
+<div class="card">
+  <div style="display:grid;grid-template-columns:auto auto 1fr;gap:8px 14px;font-size:12px;line-height:1.6">
+    <span class="tag tag-green" style="font-size:9px;align-self:start;margin-top:2px">HIGH</span>
+    <strong style="white-space:nowrap">Real-time Greeks</strong>
+    <span style="color:var(--text-dim)">Live delta, gamma, theta, vega for all positions. Delta-neutral hedging suggestions.</span>
+
+    <span class="tag tag-green" style="font-size:9px;align-self:start;margin-top:2px">HIGH</span>
+    <strong style="white-space:nowrap">Walk-Forward Validation</strong>
+    <span style="color:var(--text-dim)">Train/test split with rolling recalibration. Show in-sample vs out-of-sample performance.</span>
+
+    <span class="tag tag-green" style="font-size:9px;align-self:start;margin-top:2px">HIGH</span>
+    <strong style="white-space:nowrap">Monte Carlo Confidence</strong>
+    <span style="color:var(--text-dim)">Resample returns to generate 5th/50th/95th percentile equity curves.</span>
+
+    <span class="tag" style="background:var(--amber);color:#000;font-size:9px;align-self:start;margin-top:2px">MED</span>
+    <strong style="white-space:nowrap">Kelly Position Sizing</strong>
+    <span style="color:var(--text-dim)">Optimal lot sizes based on win rate, payoff ratio, and account size.</span>
+
+    <span class="tag" style="background:var(--amber);color:#000;font-size:9px;align-self:start;margin-top:2px">MED</span>
+    <strong style="white-space:nowrap">Fee & Commission Model</strong>
+    <span style="color:var(--text-dim)">Per-contract commissions, exchange fees, and breakeven debit analysis.</span>
+
+    <span class="tag" style="background:var(--amber);color:#000;font-size:9px;align-self:start;margin-top:2px">MED</span>
+    <strong style="white-space:nowrap">Event Calendar</strong>
+    <span style="color:var(--text-dim)">FOMC, CPI, NFP, earnings clusters flagged with adjusted confidence scores.</span>
+
+    <span class="tag" style="background:var(--amber);color:#000;font-size:9px;align-self:start;margin-top:2px">MED</span>
+    <strong style="white-space:nowrap">Real Intraday Data</strong>
+    <span style="color:var(--text-dim)">Replace synthetic paths with minute-bar data for accurate trap timing.</span>
+
+    <span class="tag tag-cyan" style="font-size:9px;align-self:start;margin-top:2px">LOW</span>
+    <strong style="white-space:nowrap">Portfolio Tracker</strong>
+    <span style="color:var(--text-dim)">Track actual fills and running equity curve across trading sessions.</span>
+
+    <span class="tag tag-cyan" style="font-size:9px;align-self:start;margin-top:2px">LOW</span>
+    <strong style="white-space:nowrap">Vol Surface Modeling</strong>
+    <span style="color:var(--text-dim)">Model SPX 0DTE skew to improve debit cost estimates for puts vs calls.</span>
+
+    <span class="tag tag-cyan" style="font-size:9px;align-self:start;margin-top:2px">LOW</span>
+    <strong style="white-space:nowrap">ML Regime Detection</strong>
+    <span style="color:var(--text-dim)">HMM or clustering using VIX term structure and realized/implied vol spread.</span>
+  </div>
+</div>
+
+<div style="margin-top:24px;padding:16px;background:var(--surface2);border-radius:10px;border-left:3px solid var(--accent)">
+  <div style="font-size:12px;color:var(--text-dim);line-height:1.6">
+    <strong style="color:var(--accent)">Full methodology details</strong> including formulas, calibration methods, debit tables, and stress testing recommendations are available in the
+    <a href="/methodology/pdf" style="color:var(--accent);text-decoration:underline">downloadable PDF</a> (13 pages).
+  </div>
+</div>
+{% endblock %}

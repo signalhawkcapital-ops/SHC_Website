@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}Backtest — Wingspan{% endblock %}
+
+{% block content %}
+<!-- HYPOTHETICAL RESULTS DISCLAIMER -->
+<div style="background:var(--amber-dim);border:1px solid var(--amber);border-radius:8px;padding:8px 14px;margin-bottom:16px;font-size:10px;line-height:1.4;color:var(--amber)">
+  <strong>HYPOTHETICAL RESULTS.</strong> Modeled debits. Does not reflect actual trades. Excludes slippage and commissions. Past performance ≠ future results. <a href="/disclosures" style="color:var(--amber);text-decoration:underline">Disclosures</a>
+</div>
+
+<!-- DATA STATUS -->
+<div class="card mb-3" id="dataStatus" style="border-color:var(--accent)">
+  <div class="flex justify-between items-center">
+    <div>
+      <h3 style="color:var(--accent);margin-bottom:6px">📊 Market Data</h3>
+      <p id="dataStatusText" style="font-size:13px;color:var(--text-dim)">Loading data info...</p>
+    </div>
+    <div class="flex gap-3">
+      <button class="btn btn-secondary btn-sm" onclick="refreshData()" id="refreshBtn">↻ Refresh Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- BACKTEST CONTROLS -->
+<div class="section-title"><span class="dot"></span> Backtest Configuration</div>
+<div class="grid-3">
+  <div class="card">
+    <label>Data Source</label>
+    <select id="dataSource">
+      <option value="real" selected>Real SPX/VIX (Yahoo Finance)</option>
+      <option value="synthetic">Synthetic (Stochastic Vol Model)</option>
+    </select>
+    <div id="syntheticOpts" class="hidden mt-2">
+      <div class="grid-2 gap-2">
+        <div><label class="text-xs">SPX Start</label><input type="number" id="btSpx" value="4700"></div>
+        <div><label class="text-xs">VIX Start</label><input type="number" id="btVix" value="15"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <label>Date Range</label>
+    <div class="grid-2 gap-2">
+      <div><label class="text-xs">Start</label><input type="date" id="btStart" value="2022-01-03"></div>
+      <div><label class="text-xs">End</label><input type="date" id="btEnd" value="2025-12-31"></div>
+    </div>
+  </div>
+  <div class="card">
+    <label>Risk Profile</label>
+    <select id="btRisk">
+      <option value="conservative">Conservative</option>
+      <option value="moderate" selected>Moderate</option>
+      <option value="aggressive">Aggressive</option>
+    </select>
+  </div>
+</div>
+<div class="grid-3 mt-3">
+  <div class="card">
+    <label>VIX Filter (Min)</label>
+    <input type="number" id="btMinVix" value="0" step="0.5">
+  </div>
+  <div class="card">
+    <label>VIX Filter (Max)</label>
+    <input type="number" id="btMaxVix" value="100" step="0.5">
+  </div>
+  <div class="card">
+    <label>Debit/Side Override</label>
+    <input type="number" id="btDebit" placeholder="Auto (BS model)" step="0.05">
+  </div>
+</div>
+<div class="flex gap-3 mt-4 justify-center">
+  <button class="btn btn-primary btn-lg" onclick="runBacktest()" id="btRunBtn">▶ Run Backtest</button>
+  <button class="btn btn-secondary btn-lg" onclick="runOptimize()" id="optRunBtn">🔍 Optimize Parameters</button>
+</div>
+
+<!-- LOADING -->
+<div id="btLoading" class="hidden text-center mt-4">
+  <div class="pulse" style="font-size:18px;color:var(--accent)">Running simulation...</div>
+</div>
+
+<!-- BACKTEST RESULTS -->
+<div id="btResults" class="hidden fade-in">
+  <div class="section-title mt-4"><span class="dot green-dot"></span> Performance Summary</div>
+  <div class="grid-4" id="perfCards"></div>
+
+  <div class="section-title"><span class="dot cyan-dot"></span> Cumulative P&amp;L</div>
+  <div class="card"><canvas id="equityCanvas" height="320"></canvas></div>
+
+  <div class="section-title"><span class="dot purple-dot"></span> P&amp;L Distribution</div>
+  <div class="grid-2">
+    <div class="card"><canvas id="histCanvas" height="280"></canvas></div>
+    <div class="card"><h3>Outcome Breakdown</h3><canvas id="outcomeCanvas" height="280"></canvas></div>
+  </div>
+
+  <div class="section-title"><span class="dot amber-dot"></span> Regime &amp; Day-of-Week Analysis</div>
+  <div class="grid-2">
+    <div class="card"><h3>By Regime</h3><div id="regimeTable"></div></div>
+    <div class="card"><h3>By Day of Week</h3><div id="dowTable"></div></div>
+  </div>
+
+  <div class="section-title"><span class="dot"></span> Monthly Performance</div>
+  <div class="card"><canvas id="monthlyCanvas" height="260"></canvas></div>
+
+  <div class="section-title"><span class="dot green-dot"></span> Calibration Insights</div>
+  <div class="card" id="calibrationCard"></div>
+
+  <div class="section-title"><span class="dot purple-dot"></span> Trap Analysis — Middle Butterfly Profit Locking</div>
+  <div id="trapAnalysis"></div>
+
+  <div class="section-title"><span class="dot"></span> Trade Log (last 50)</div>
+  <div class="card scroll-x"><table id="tradeLog"><thead></thead><tbody></tbody></table></div>
+</div>
+
+<!-- OPTIMIZATION RESULTS -->
+<div id="optResults" class="hidden fade-in">
+  <div class="section-title mt-4"><span class="dot cyan-dot"></span> Optimization Results</div>
+  <div class="grid-3" id="optCards"></div>
+  <div class="card mt-3"><h3>Parameter Heatmap</h3><canvas id="heatmapCanvas" height="360"></canvas></div>
+  <div class="card mt-3" id="optNotes"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script src="{{ url_for('static', filename='js/backtest.js') }}"></script>
+<script>
+// Toggle synthetic options
+document.getElementById('dataSource').addEventListener('change', function() {
+  document.getElementById('syntheticOpts').classList.toggle('hidden', this.value !== 'synthetic');
+});
+
+// Load data info on page load
+async function loadDataInfo() {
+  try {
+    const resp = await fetch('/api/data-info');
+    const info = await resp.json();
+    const el = document.getElementById('dataStatusText');
+    const card = document.getElementById('dataStatus');
+    if (info.available) {
+      el.innerHTML = `<span style="color:var(--green)">✓ Real data loaded:</span> ${info.total_days || info.rows} trading days (${info.first_date || ''} to ${info.last_date || ''})`;
+      card.style.borderColor = 'var(--green)';
+    } else if (info.total_days) {
+      el.innerHTML = `<span style="color:var(--amber)">⚠ Using synthetic fallback:</span> ${info.total_days} days. Click Refresh to download real data.`;
+      card.style.borderColor = 'var(--amber)';
+    } else {
+      el.innerHTML = `<span style="color:var(--amber)">⚠ No data cached.</span> Click Refresh to download from Yahoo Finance.`;
+      card.style.borderColor = 'var(--amber)';
+    }
+    // Set date range from data
+    if (info.first_date) document.getElementById('btStart').value = info.first_date;
+    if (info.last_date) document.getElementById('btEnd').value = info.last_date;
+  } catch(e) {
+    document.getElementById('dataStatusText').textContent = 'Could not check data status.';
+  }
+}
+
+async function refreshData() {
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.textContent = 'Downloading...';
+  try {
+    const resp = await fetch('/api/refresh-data', {method: 'POST'});
+    const json = await resp.json();
+    if (json.status === 'ok') {
+      alert('Data refreshed: ' + json.message);
+      loadDataInfo();
+    } else {
+      alert('Error: ' + json.message);
+    }
+  } catch(e) {
+    alert('Download failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '↻ Refresh Data';
+  }
+}
+
+loadDataInfo();
+</script>
+{% endblock %}

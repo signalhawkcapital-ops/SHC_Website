@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Risk Disclosures — Wingspan{% endblock %}
+
+{% block content %}
+<div style="max-width:780px;margin:0 auto;padding:20px 0 60px">
+  <h1 style="font-size:28px;margin-bottom:4px">Risk Disclosures</h1>
+  <p style="color:var(--text-muted);font-size:13px;margin-bottom:32px">Last updated: February 10, 2026</p>
+
+  <div style="font-size:13px;line-height:1.8;color:var(--text-dim)">
+
+    <!-- Top-level warning box -->
+    <div style="background:linear-gradient(135deg,#7f1d1d22,#1a1a2e);border:1px solid var(--red);border-radius:12px;padding:20px;margin-bottom:28px">
+      <div style="font-size:15px;font-weight:700;color:var(--red);margin-bottom:8px">IMPORTANT RISK WARNING</div>
+      <p style="color:var(--text);margin:0;font-size:14px;line-height:1.7">
+        Trading options, especially 0DTE (zero days to expiration) options, involves a <strong>high degree of risk</strong> and may not be suitable for all investors. <strong>You could lose your entire investment.</strong> Before trading options, you should carefully consider your investment objectives, level of experience, and risk appetite. The possibility exists that you could sustain a loss in excess of your initial investment.
+      </p>
+    </div>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">1. General Investment Risk</h2>
+    <p>Options are derivative instruments that carry significant risks. The value of options contracts can fluctuate rapidly, and you may lose your entire premium paid. Options trading requires an understanding of the underlying market, options pricing, Greeks, and risk management. <strong style="color:var(--text)">If you do not fully understand these concepts, you should not trade options.</strong></p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">2. 0DTE-Specific Risks</h2>
+    <p>Zero days to expiration options present heightened risks compared to longer-dated options:</p>
+    <p style="margin:8px 0 4px">a) <strong style="color:var(--text)">Extreme time decay (theta):</strong> 0DTE options lose value rapidly throughout the trading day. Premium can decline by 50-90% in hours regardless of the underlying's direction.</p>
+    <p style="margin:4px 0">b) <strong style="color:var(--text)">Gamma risk:</strong> Near expiration, small moves in SPX can cause large, rapid changes in option values and P&L. This risk accelerates dramatically in the final hours of trading.</p>
+    <p style="margin:4px 0">c) <strong style="color:var(--text)">Liquidity risk:</strong> Bid-ask spreads on 0DTE options can widen significantly, especially at far out-of-the-money strikes and during periods of high volatility. You may not be able to exit positions at favorable prices.</p>
+    <p style="margin:4px 0">d) <strong style="color:var(--text)">Pin risk:</strong> Options near the money at expiration may settle in unexpected ways, particularly during volatile closing sessions.</p>
+    <p style="margin:4px 0">e) <strong style="color:var(--text)">Gap risk:</strong> Sudden market moves from news events, economic releases, or market dislocations can cause instant, large losses on 0DTE positions with no opportunity to adjust.</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">3. Butterfly Spread Risks</h2>
+    <p>The butterfly strategy used by Wingspan has defined risk (maximum loss is limited to the debit paid), but important risks remain:</p>
+    <p style="margin:8px 0 4px">a) <strong style="color:var(--text)">Maximum loss is the total debit paid.</strong> If SPX settles outside the butterfly wings at expiration, the entire premium is lost. This occurs on approximately 38% of trading days in our backtest.</p>
+    <p style="margin:4px 0">b) <strong style="color:var(--text)">Execution risk:</strong> Butterfly spreads involve 3 legs (6 legs for a batman). Legging into multi-leg orders can result in partial fills, slippage, and adverse pricing.</p>
+    <p style="margin:4px 0">c) <strong style="color:var(--text)">Settlement risk:</strong> SPX options use PM settlement. The settlement price may differ materially from the 4:00 PM closing price.</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">4. Hypothetical Performance Limitations</h2>
+    <div style="background:var(--surface);border:1px solid var(--amber);border-radius:10px;padding:16px;margin:12px 0">
+      <p style="color:var(--text);margin:0"><strong>HYPOTHETICAL PERFORMANCE RESULTS HAVE MANY INHERENT LIMITATIONS, SOME OF WHICH ARE DESCRIBED BELOW.</strong></p>
+      <p style="margin:10px 0 0">No representation is being made that any account will or is likely to achieve profits or losses similar to those shown. In fact, there are frequently sharp differences between hypothetical performance results and the actual results subsequently achieved by any particular trading program.</p>
+      <p style="margin:10px 0 0">One of the limitations of hypothetical performance results is that they are generally prepared with the benefit of hindsight. In addition, hypothetical trading does not involve financial risk, and no hypothetical trading record can completely account for the impact of financial risk in actual trading.</p>
+      <p style="margin:10px 0 0">For example, the ability to withstand losses or to adhere to a particular trading program in spite of trading losses are material points which can also adversely affect actual trading results. There are numerous other factors related to the markets in general or to the implementation of any specific trading program which cannot be fully accounted for in the preparation of hypothetical performance results and all of which can adversely affect actual trading results.</p>
+    </div>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">5. Backtesting Limitations</h2>
+    <p>The performance metrics displayed on this platform are derived from backtested data and are subject to the following limitations:</p>
+    <p style="margin:8px 0 4px">a) <strong style="color:var(--text)">Modeled debit costs:</strong> Option premiums (debit costs) are estimated using a mathematical model, not actual market prices. Real market prices may differ materially based on supply/demand, market maker inventory, time of day, and overall market conditions.</p>
+    <p style="margin:4px 0">b) <strong style="color:var(--text)">Synthetic data:</strong> When real historical data is unavailable, the system uses statistically generated synthetic data. Synthetic data cannot capture all real-world market dynamics including event risk, correlation breakdowns, and microstructure effects.</p>
+    <p style="margin:4px 0">c) <strong style="color:var(--text)">No execution modeling:</strong> Backtests assume orders are filled at modeled prices. In reality, execution quality varies by broker, time of day, order type, and market conditions.</p>
+    <p style="margin:4px 0">d) <strong style="color:var(--text)">Survivorship bias:</strong> The backtest assumes you trade every qualifying day. In practice, you may miss days due to personal schedule, platform issues, or psychological factors.</p>
+    <p style="margin:4px 0">e) <strong style="color:var(--text)">Model risk:</strong> The VIX-based debit model, theta decay curve, and positioning algorithm are approximations. Model inaccuracies can lead to materially different real-world results.</p>
+    <p style="margin:4px 0">f) <strong style="color:var(--text)">Overfitting risk:</strong> Strategy parameters may be optimized to historical data in ways that do not generalize to future market conditions.</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">6. Not a Registered Investment Adviser</h2>
+    <p><strong style="color:var(--text)">Wingspan LLC is not registered as an investment adviser with the U.S. Securities and Exchange Commission (SEC) or any state securities regulatory authority.</strong> The Service does not provide personalized investment advice. Strategy outputs are generated by mathematical models applied uniformly and are not tailored to your individual financial situation, risk tolerance, or investment objectives.</p>
+    <p style="margin-top:8px"><strong style="color:var(--text)">Nothing on this platform constitutes financial advice, investment advice, or trading advice.</strong> All content, strategy outputs, charts, and data are provided for <strong>educational and informational purposes only</strong>. The Service is an analytical software tool, similar to a calculator or spreadsheet. The outputs should be treated as one input among many in your own independent decision-making process. You should consult with a qualified financial professional before making any investment decisions.</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">7. Not a Broker-Dealer</h2>
+    <p>Wingspan LLC is not a registered broker-dealer. We do not execute trades, hold customer funds, custody securities, or maintain brokerage accounts. All trades are executed by you through your own independently chosen brokerage firm.</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">8. No Guarantees of Profit</h2>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin:12px 0">
+      <p style="color:var(--text);margin:0"><strong>There is no guarantee that the strategies described herein will be profitable, and you should be prepared to lose your entire investment.</strong> Options trading involves substantial risk of loss, including the possibility of losing more than your initial investment in certain strategies (though butterfly spreads limit loss to the debit paid). Past performance, whether actual or hypothetical, is not indicative of future results. Market conditions change, and strategies that performed well historically may perform poorly in the future.</p>
+    </div>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">9. Your Responsibilities</h2>
+    <p>As a user of the Service, you are solely responsible for:</p>
+    <p style="margin:8px 0 4px">a) Conducting your own due diligence before placing any trades</p>
+    <p style="margin:4px 0">b) Understanding the risks of options trading generally and 0DTE options specifically</p>
+    <p style="margin:4px 0">c) Ensuring that options trading is appropriate for your financial situation</p>
+    <p style="margin:4px 0">d) Verifying all strategy parameters, strikes, and calculations independently</p>
+    <p style="margin:4px 0">e) Implementing your own risk management, position sizing, and stop-loss procedures</p>
+    <p style="margin:4px 0">f) Complying with all applicable laws and regulations in your jurisdiction</p>
+    <p style="margin:4px 0">g) Maintaining adequate capital in your brokerage account</p>
+    <p style="margin:4px 0">h) Understanding your broker's margin requirements and approval levels for options trading</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">10. Tax Implications</h2>
+    <p>Options trading may have complex tax implications. Profits and losses from options trading are generally taxable events. You are solely responsible for understanding and complying with all applicable tax laws. We recommend consulting a qualified tax professional. Wingspan does not provide tax advice.</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">11. Third-Party Data</h2>
+    <p>The Service may incorporate data from third-party sources (including Yahoo Finance, CBOE, and others). We do not warrant the accuracy, completeness, or timeliness of third-party data. Third-party data is provided "as is" and may be subject to the respective providers' terms and conditions.</p>
+
+    <h2 style="font-size:16px;color:var(--text);margin:28px 0 8px">12. Contact</h2>
+    <p>Questions about these disclosures: <strong style="color:var(--text)">legal@wingspan.com</strong></p>
+
+    <!-- Bottom acknowledgment -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:32px;text-align:center">
+      <p style="color:var(--text);margin:0;font-size:14px"><strong>By using Wingspan, you acknowledge that you have read, understood, and agree to all risk disclosures above.</strong></p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Directional Signals — Wingspan{% endblock %}
+
+{% block content %}
+<div class="section-title"><span class="dot"></span> Daily Directional Signals</div>
+<p style="font-size:13px;color:var(--text-dim);margin:-12px 0 20px 18px">
+  4 evidence-based strategies analyzed against real SPX history. Each signal is independently backtested.
+</p>
+
+<!-- INPUTS -->
+<div class="grid-4">
+  <div class="card"><label>SPX Open</label><input type="number" id="dSpxOpen" value="" placeholder="Loading..." step="0.01"></div>
+  <div class="card"><label>VIX</label><input type="number" id="dVix" value="" placeholder="Loading..." step="0.1"></div>
+  <div class="card"><label>Date</label><input type="date" id="dDate"></div>
+  <div class="card" style="display:flex;align-items:flex-end">
+    <button class="btn btn-primary btn-block" onclick="runDirectional()" id="dRunBtn">⚡ Generate Signals</button>
+  </div>
+</div>
+
+<div id="dLoading" class="hidden text-center mt-4"><div class="pulse" style="font-size:18px;color:var(--accent)">Analyzing signals...</div></div>
+
+<!-- RESULTS -->
+<div id="dResults" class="hidden fade-in">
+
+  <!-- Consensus -->
+  <div class="section-title mt-4"><span class="dot green-dot"></span> Consensus</div>
+  <div class="grid-4" id="consensusGrid"></div>
+
+  <!-- Signal Cards -->
+  <div class="section-title"><span class="dot cyan-dot"></span> Strategy Signals</div>
+  <div class="grid-2" id="signalCards"></div>
+
+  <!-- Recommendation -->
+  <div class="section-title"><span class="dot amber-dot"></span> Trade Recommendation</div>
+  <div class="card" id="tradeRec"></div>
+
+  <!-- Disclaimer -->
+  <div class="card mt-3" style="border-color:var(--amber);background:var(--amber-dim)">
+    <p style="font-size:12px;color:var(--amber);margin:0">⚠ <strong>Disclaimer:</strong> Statistical model for educational purposes only. Not financial advice. Past backtest performance does NOT guarantee future results. Real trading involves slippage, spreads, and execution risk not modeled here.</p>
+  </div>
+</div>
+
+<!-- BACKTEST -->
+<div class="section-title mt-4"><span class="dot purple-dot"></span> Strategy Backtests</div>
+<p style="font-size:13px;color:var(--text-dim);margin:-12px 0 12px 18px">
+  Historical performance of each strategy against real SPX data.
+</p>
+<div class="grid-2 mb-3">
+  <div class="card">
+    <div class="grid-2 gap-2">
+      <div><label>Start</label><input type="date" id="dBtStart" value="2022-01-03"></div>
+      <div><label>End</label><input type="date" id="dBtEnd" value="2025-12-31"></div>
+    </div>
+  </div>
+  <div class="card" style="display:flex;align-items:flex-end">
+    <button class="btn btn-primary btn-block" onclick="runDirBacktest()" id="dBtBtn">▶ Run Backtest</button>
+  </div>
+</div>
+
+<div id="dBtLoading" class="hidden text-center mt-3"><div class="pulse" style="font-size:16px;color:var(--purple)">Backtesting strategies...</div></div>
+
+<div id="dBtResults" class="hidden fade-in">
+  <div class="grid-2" id="btStratCards"></div>
+  <div class="section-title mt-3"><span class="dot green-dot"></span> Backtest Insights</div>
+  <div class="card" id="btInsights"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/directional.js') }}"></script>
+<script>
+document.getElementById('dDate').value = new Date().toISOString().split('T')[0];
+
+// Fetch live quote
+(async function() {
+  try {
+    const resp = await fetch('/api/live-quote');
+    const data = await resp.json();
+    if (data.status === 'ok') {
+      if (data.spx_open) document.getElementById('dSpxOpen').value = data.spx_open;
+      else if (data.spx_last) document.getElementById('dSpxOpen').value = data.spx_last;
+      if (data.vix_open) document.getElementById('dVix').value = data.vix_open;
+      else if (data.vix_last) document.getElementById('dVix').value = data.vix_last;
+    } else {
+      document.getElementById('dSpxOpen').value = '6000';
+      document.getElementById('dVix').value = '16';
+    }
+  } catch(e) {
+    document.getElementById('dSpxOpen').value = '6000';
+    document.getElementById('dVix').value = '16';
+  }
+})();
+
+// Load data range
+(async function() {
+  try {
+    const resp = await fetch('/api/data-info');
+    const info = await resp.json();
+    if (info.first_date) document.getElementById('dBtStart').value = info.first_date;
+    if (info.last_date) document.getElementById('dBtEnd').value = info.last_date;
+  } catch(e) {}
+})();
+</script>
+{% endblock %}

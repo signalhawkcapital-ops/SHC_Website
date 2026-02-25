@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Account — Wingspan{% endblock %}
+{% block content %}
+<div style="max-width:640px;margin:40px auto">
+  <h1 style="font-size:28px;font-weight:700;margin-bottom:8px">Account</h1>
+  <p style="color:var(--text-dim);margin-bottom:32px">Manage your subscription and account settings.</p>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+      <div class="card mb-3" style="border-color:var(--{% if cat == 'error' %}red{% elif cat == 'success' %}green{% else %}amber{% endif %});padding:12px 16px">
+        <span style="font-size:13px;color:var(--{% if cat == 'error' %}red{% elif cat == 'success' %}green{% else %}amber{% endif %})">{{ msg }}</span>
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- Profile -->
+  <div class="card" style="margin-bottom:20px">
+    <h3>Profile</h3>
+    <table>
+      <tr><td style="color:var(--text-dim);width:35%">Email</td><td class="font-mono">{{ user.email }}</td></tr>
+      <tr><td style="color:var(--text-dim)">Name</td><td>{{ user.name or '—' }}</td></tr>
+      <tr><td style="color:var(--text-dim)">Member since</td><td>{{ user.created_at[:10] if user.created_at else '—' }}</td></tr>
+    </table>
+  </div>
+
+  <!-- Subscription -->
+  <div class="card" style="margin-bottom:20px;border-color:{% if sub_active %}var(--green){% else %}var(--amber){% endif %}">
+    <h3>Subscription</h3>
+    {% if sub_active %}
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="tag tag-green" style="font-size:13px;padding:6px 14px">✓ Pro — Active</span>
+        <span style="font-size:13px;color:var(--text-dim)">Full access to all tools</span>
+      </div>
+      <div style="display:flex;gap:12px">
+        {% if user.stripe_customer_id %}
+          <form method="POST" action="/billing/portal" style="display:inline">
+            <button type="submit" class="btn btn-secondary">Manage Subscription</button>
+          </form>
+        {% endif %}
+        <a href="/batman" class="btn btn-primary">Launch App →</a>
+      </div>
+    {% else %}
+      <div style="margin-bottom:16px">
+        <span class="tag tag-amber" style="font-size:13px;padding:6px 14px">Free Account</span>
+        <span style="font-size:13px;color:var(--text-dim);margin-left:8px">Subscribe to access the trading tools</span>
+      </div>
+      <div style="background:var(--surface2);border-radius:12px;padding:24px;margin-bottom:20px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:700;margin-bottom:4px">$300<span style="font-size:14px;color:var(--text-muted);font-weight:400">/month</span></div>
+        <div style="font-size:13px;color:var(--text-dim);margin-bottom:16px">Full access to Wingspan Strategy, Directional Signals, and Backtester</div>
+        <div style="font-size:13px;color:var(--text-dim);line-height:2">
+          <span style="color:var(--green);margin-right:4px">✓</span> VIX-calibrated positioning (71% historical win rate) &nbsp;
+          <span style="color:var(--green);margin-right:4px">✓</span> 4 directional strategies &nbsp;
+          <span style="color:var(--green);margin-right:4px">✓</span> 1,500+ days of backtested data &nbsp;
+          <span style="color:var(--green);margin-right:4px">✓</span> Cancel anytime
+        </div>
+        <div style="margin-top:12px;padding:12px;background:var(--surface);border-radius:8px;border-left:3px solid var(--green)">
+          <div style="font-size:12px;color:var(--text-dim)">
+            In low vol, a 30pt fly costs ~$600. A center pin pays up to <strong style="color:var(--green)">$2,400 net</strong> — one winner covers 8 months. The engine tells you when to trade and when to sit out.
+          </div>
+        </div>
+      </div>
+      {% if stripe_configured %}
+        <form method="POST" action="/billing/checkout">
+          <button type="submit" class="btn btn-success btn-lg btn-block">Subscribe — $300/month →</button>
+        </form>
+      {% else %}
+        <div style="padding:16px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--amber)">
+          <div style="font-size:13px;color:var(--amber);font-weight:600;margin-bottom:4px">Stripe Not Configured</div>
+          <div style="font-size:12px;color:var(--text-dim)">
+            Set <code>STRIPE_SECRET_KEY</code>, <code>STRIPE_PUBLISHABLE_KEY</code>, and <code>STRIPE_PRICE_ID</code> in your <code>.env</code> file to enable payments.
+            See the setup guide in <code>.env.example</code>.
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <!-- Quick links -->
+  {% if sub_active %}
+  <div class="card">
+    <h3>Quick Access</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <a href="/batman" style="text-decoration:none" class="card text-center" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor=''">
+        <div style="font-size:24px;margin-bottom:4px">⚡</div>
+        <div style="font-size:13px;font-weight:600;color:var(--green)">Wingspan Strategy</div>
+      </a>
+      <a href="/directional" style="text-decoration:none" class="card text-center" onmouseover="this.style.borderColor='var(--cyan)'" onmouseout="this.style.borderColor=''">
+        <div style="font-size:24px;margin-bottom:4px">📊</div>
+        <div style="font-size:13px;font-weight:600;color:var(--cyan)">Directional</div>
+      </a>
+      <a href="/backtest" style="text-decoration:none" class="card text-center" onmouseover="this.style.borderColor='var(--purple)'" onmouseout="this.style.borderColor=''">
+        <div style="font-size:24px;margin-bottom:4px">📈</div>
+        <div style="font-size:13px;font-weight:600;color:var(--purple)">Backtest</div>
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="text-center mt-4">
+    <a href="/logout" style="color:var(--text-muted);font-size:13px;text-decoration:none">Log out</a>
+  </div>
+</div>
+{% endblock %}

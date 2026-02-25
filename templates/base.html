@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Wingspan{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<div class="grain"></div>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">
+      <svg viewBox="0 0 32 32" width="28" height="28" fill="none"><path d="M16 6C12 10 5 14 4 20c0 2 2 4 5 3 3-1 5-4 7-7 2 3 4 6 7 7 3 1 5-1 5-3C27 14 20 10 16 6z" fill="#4f6ef720" stroke="#4f6ef7" stroke-width="1.2" stroke-linejoin="round"/><circle cx="16" cy="18" r="1.5" fill="#4f6ef7"/></svg>
+      <span>Wingspan</span>
+    </a>
+    <div class="nav-links">
+      {% if session.get('user_id') %}
+        <a href="/batman" class="{% if request.path == '/batman' %}active{% endif %}">Wingspan Strategy</a>
+        <a href="/directional" class="{% if request.path == '/directional' %}active{% endif %}">Directional</a>
+        <a href="/backtest" class="{% if request.path == '/backtest' %}active{% endif %}">Backtest</a>
+        <a href="/methodology" class="{% if request.path == '/methodology' %}active{% endif %}">Methodology</a>
+        <a href="/resources" class="{% if request.path == '/resources' %}active{% endif %}">Resources</a>
+        <a href="/account" class="{% if request.path == '/account' %}active{% endif %}">Account</a>
+      {% else %}
+        <a href="/#features">Features</a>
+        <a href="/#pricing">Pricing</a>
+        <a href="/login">Log In</a>
+        <a href="/signup" style="background:var(--accent);color:#fff;border-radius:8px;padding:8px 16px">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  {% block content %}{% endblock %}
+</div>
+
+<footer class="footer">
+  <p>Wingspan — 0DTE SPX Strategy Analysis</p>
+  <p class="text-muted" style="margin:6px 0;max-width:600px;display:inline-block;line-height:1.5">Not a registered investment adviser or broker-dealer. For educational purposes only — not financial advice. Hypothetical backtest results. Past performance ≠ future results. Options involve substantial risk of loss.</p>
+  <div style="display:flex;gap:18px;justify-content:center;margin-top:8px;font-size:12px">
+    <a href="/terms" style="color:var(--text-muted);text-decoration:none">Terms of Service</a>
+    <a href="/privacy" style="color:var(--text-muted);text-decoration:none">Privacy Policy</a>
+    <a href="/disclosures" style="color:var(--text-muted);text-decoration:none">Risk Disclosures</a>
+  </div>
+</footer>
+
+<div id="toast" class="toast"></div>
+
+{% block scripts %}{% endblock %}
+<script>
+function showToast(msg, type='info', duration=3500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast toast-' + type + ' show';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), duration);
+}
+</script>
+</body>
+</html>
