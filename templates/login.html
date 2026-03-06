@@ -1,58 +1,136 @@
-{% extends 'layout.html' %}
-{% block content %}
-<style>
-  .login-wrap {
-    max-width: 440px; margin: 40px auto;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 36px;
-    box-shadow: 0 16px 50px rgba(0,0,0,0.3);
-  }
-  .login-wrap h1 { text-align: center; margin-bottom: 4px; font-size: 32px; }
-  .login-sub { text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
-  .login-wrap label { display: block; font-size: 13px; color: var(--text-muted); margin: 14px 0 6px; }
-  .login-wrap input[type="email"],
-  .login-wrap input[type="password"] {
-    width: 100%; padding: 12px 14px; border-radius: 12px;
-    border: 1px solid var(--border); background: rgba(0,0,0,0.2);
-    color: var(--text); font-size: 14px; outline: none;
-  }
-  .login-wrap input:focus { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
-  .login-wrap .btn { width: 100%; margin-top: 18px; font-size: 15px; padding: 13px; }
-  .login-msg { text-align: center; margin-bottom: 16px; padding: 10px 14px; border-radius: 10px; font-size: 14px; }
-  .login-msg.info { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #93b4ff; }
-  .login-msg.err { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
-  .login-links { text-align: center; margin-top: 18px; font-size: 14px; color: var(--text-muted); }
-  .login-links a { color: var(--brand); text-decoration: none; }
-  .login-links a:hover { text-decoration: underline; }
-  .login-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-muted); font-size: 13px; }
-  .login-divider::before, .login-divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In – Signal Hawk Capital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070B12;
+      --card:#0E1628;
+      --card2:#101C33;
+      --text:#EAF0FF;
+      --muted:#A9B7D0;
+      --border:rgba(255,255,255,.08);
+      --accent:#5B5CFF;
+      --danger:rgba(255, 99, 99, .18);
+      --danger-border:rgba(255, 99, 99, .35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background: radial-gradient(1200px 600px at 30% 0%, #11224A 0%, var(--bg) 60%);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+    }
+    .card{
+      width:min(980px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:28px;
+      box-shadow:0 30px 80px rgba(0,0,0,.45);
+      padding:44px;
+    }
+    h1{margin:0 0 14px; font-size:56px; letter-spacing:-.04em;}
+    .sub{color:var(--muted); margin:0 0 28px; font-size:18px;}
+    .grid{display:grid; grid-template-columns: 1fr 1fr; gap:28px;}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} h1{font-size:44px;} }
 
-<div class="login-wrap">
-  <h1>Log in</h1>
-  <p class="login-sub">Access your Signal Hawk Capital account.</p>
+    .panel{background: rgba(14, 22, 40, .75); border:1px solid var(--border); border-radius:20px; padding:26px;}
 
-  {% if msg %}<div class="login-msg info">{{ msg }}</div>{% endif %}
-  {% if error %}<div class="login-msg err">{{ error }}</div>{% endif %}
+    label{display:block; color:var(--muted); font-size:12px; margin:14px 0 8px;}
+    input{
+      width:100%;
+      background: rgba(255,255,255,.04);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:14px 14px;
+      border-radius:14px;
+      outline:none;
+      font-size:14px;
+    }
+    input:focus{border-color: rgba(91,92,255,.55); box-shadow:0 0 0 4px rgba(91,92,255,.18);}
 
-  <form method="POST" action="{{ url_for('login') }}">
-    <label>Email</label>
-    <input name="email" type="email" placeholder="you@example.com" required autofocus>
-    <label>Password</label>
-    <input name="password" type="password" placeholder="Enter your password" required>
-    <button class="btn primary" type="submit">Log in</button>
-  </form>
+    .row{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-top:18px;}
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:14px 18px;
+      border-radius:14px;
+      font-weight:700;
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:180px;
+    }
+    .btn.primary{background: linear-gradient(180deg, #6768FF, var(--accent)); border-color: rgba(91,92,255,.35);}
+    .btn:hover{filter:brightness(1.06)}
 
-  <div class="login-links">
-    <a href="{{ url_for('forgot_password') }}">Forgot password?</a>
-    &nbsp;&middot;&nbsp;
-    <a href="{{ url_for('request_setup') }}">Need a setup link?</a>
+    .alert{
+      border:1px solid var(--danger-border);
+      background: var(--danger);
+      padding:12px 14px;
+      border-radius:14px;
+      color:#FFD9D9;
+      margin: 0 0 16px;
+      font-weight:600;
+    }
+
+    .muted{color:var(--muted); font-size:13px; line-height:1.5;}
+    a.link{color:#9FB1FF; text-decoration:underline;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Log In</h1>
+    <p class="sub">Access your account, alerts, and analytics.</p>
+
+    {% if msg %}
+      <div class="alert">{{ msg }}</div>
+    {% endif %}
+
+    <div class="grid">
+      <div class="panel">
+        <h2 style="margin:0 0 10px; font-size:18px;">Sign in with email</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="you@example.com" required>
+
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Password" required>
+
+          <div class="row">
+            <button class="btn primary" type="submit">Sign In</button>
+            <a class="btn" href="{{ url_for('request_setup') }}">Set up account</a>
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <a class="link" href="{{ url_for('forgot_password') }}">Forgot password?</a>
+          </div>
+        </form>
+      </div>
+
+
+        <hr style="border:0; border-top:1px solid var(--border); margin:22px 0;">
+
+        <p class="muted">
+          Don’t have a password yet? Click <b>Set up account</b> to receive a secure setup link via email.
+          The link expires in 24 hours.
+        </p>
+      </div>
+    </div>
   </div>
-
-  <div class="login-divider">or</div>
-
-  <div class="login-links">
-    Don't have an account? <a href="{{ url_for('signup') }}">Subscribe</a>
-  </div>
-</div>
-{% endblock %}
+</body>
+</html>

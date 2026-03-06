@@ -1,39 +1,89 @@
-{% extends 'layout.html' %}
-{% block content %}
-<style>
-  .auth-card {
-    max-width: 480px; margin: 40px auto;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 36px;
-    box-shadow: 0 16px 50px rgba(0,0,0,0.3);
-  }
-  .auth-card h1 { text-align: center; font-size: 28px; margin-bottom: 8px; }
-  .auth-card .sub { text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 20px; }
-  .auth-card label { display: block; font-size: 13px; color: var(--text-muted); margin: 14px 0 6px; }
-  .auth-card input {
-    width: 100%; padding: 12px 14px; border-radius: 12px;
-    border: 1px solid var(--border); background: rgba(0,0,0,0.2);
-    color: var(--text); font-size: 14px; outline: none;
-  }
-  .auth-card input:focus { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
-  .auth-card .btn { width: 100%; margin-top: 16px; font-size: 15px; padding: 13px; }
-  .auth-card .hint { color: var(--text-muted); font-size: 13px; }
-</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finish Setup – Signal Hawk Capital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{ --bg:#070b14; --card:#0b1324; --border:#1b2a47; --text:#e9eefb; --muted:#a9b4c9; --accent:#5b5bf7; --danger:#ff6b6b; }
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial; background: radial-gradient(1000px 500px at 50% 0%, #0b1630 0%, var(--bg) 60%); color:var(--text); min-height:100vh; }
+    .wrap{ max-width: 880px; margin: 0 auto; padding: 56px 20px; }
+    .card{ background: linear-gradient(180deg, rgba(20,33,61,.7), rgba(11,19,36,.9)); border:1px solid var(--border); border-radius: 22px; padding: 34px; box-shadow: 0 20px 50px rgba(0,0,0,.4); }
+    h1{ margin:0 0 10px; font-size: 44px; letter-spacing:-.02em; }
+    p{ margin: 8px 0 0; color: var(--muted); }
+    .alert{ margin-top:16px; padding: 12px 14px; border-radius: 14px; border:1px solid rgba(255,107,107,.35); background: rgba(255,107,107,.10); color: #ffd1d1; }
+    .ok{ border-color: rgba(95,234,139,.35); background: rgba(95,234,139,.10); color: #d0ffe1; }
+    form{ margin-top: 18px; display:grid; gap:12px; max-width: 520px; }
+    label{ font-size: 13px; color: var(--muted); }
+    input{ width:100%; padding: 14px 14px; border-radius: 14px; border:1px solid rgba(255,255,255,.10); background: rgba(8,14,28,.65); color: var(--text); outline:none; }
+    input:focus{ border-color: rgba(91,91,247,.55); box-shadow: 0 0 0 4px rgba(91,91,247,.14); }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; padding: 14px 16px; border-radius: 14px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: var(--text); text-decoration:none; font-weight: 700; cursor:pointer; }
+    .btn.primary{ background: var(--accent); border-color: rgba(255,255,255,.12); }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .small{ font-size:12px; color: var(--muted); }
+    .top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+    .link{ color:#b9c2ff; text-decoration:underline; }
+    .pill{ display:inline-flex; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); color: var(--muted); font-size:12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <div>
+          <h1>Finish account setup</h1>
+          <p>Create a password and confirm your mobile number.</p>
+        </div>
+        <div class="pill">Signal Hawk Capital</div>
+      </div>
 
-<div class="auth-card">
-  <h1>Set up your account</h1>
-  <p class="sub">Account: <strong>{{ email }}</strong></p>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert {{ 'ok' if category=='success' else '' }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
 
-  <form method="POST" action="{{ url_for('account_setup') }}">
-    <input type="hidden" name="token" value="{{ token }}">
-    <label>Phone (for alerts)</label>
-    <input name="phone" type="tel" placeholder="+1 555 123 4567">
-    <label>Password</label>
-    <input name="password" type="password" minlength="10" placeholder="At least 10 characters" required>
-    <label>Confirm password</label>
-    <input name="confirm_password" type="password" minlength="10" placeholder="Re-enter password" required>
-    <button class="btn primary" type="submit">Complete Setup</button>
-  </form>
-  <p class="hint" style="margin-top:14px;text-align:center;">Setup link expires in 24 hours.</p>
-</div>
-{% endblock %}
+      <form method="POST" action="{{ url_for('account_setup') }}">
+        <input type="hidden" name="token" value="{{ token }}" />
+
+        <div>
+          <label>Email</label>
+          <input type="email" value="{{ email }}" disabled />
+        </div>
+
+        <div>
+          <label>Phone (E.164 or digits)</label>
+          <input name="phone" type="tel" placeholder="+1 555 555 5555" required />
+        </div>
+
+        <div>
+          <label>Create password</label>
+          <input name="password" type="password" placeholder="••••••••" required />
+        </div>
+
+        <div>
+          <label>Confirm password</label>
+          <input name="confirm_password" type="password" placeholder="••••••••" required />
+        </div>
+
+        <div class="row">
+          <button class="btn primary" type="submit">Complete setup</button>
+          <a class="btn" href="{{ url_for('login') }}">Back to login</a>
+        </div>
+
+        <div class="small">This setup link expires in 24 hours. If it expires, request a new setup email.</div>
+      </form>
+
+      <div style="margin-top:18px" class="small">
+        Need help? Email <a class="link" href="mailto:signal.hawk.capital@gmail.com">signal.hawk.capital@gmail.com</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

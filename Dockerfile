@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# System deps (safe baseline; wheels will usually avoid heavy compiles anyway)
+# Install minimal build tools (wheels should avoid heavy compilation)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
